@@ -90,6 +90,7 @@ export interface QimenPalace {
   baShen: string      // 八神
   kongWang: boolean   // 是否空亡
   yiMa: boolean       // 是否有驿马
+  jiXing: boolean     // 是否击刑
 }
 
 export interface QimenResult {
@@ -382,6 +383,18 @@ export function calculateQimen(date?: Date): QimenResult {
   const maZhi = YI_MA_TABLE[hourZhi] || ''
   const maGong = maZhi ? ZHI_TO_GONG[maZhi] : -1
 
+  // 击刑：六仪落入相刑宫位
+  // 甲子戊→震3(子刑卯), 甲戌己→坤2(戌刑未), 甲申庚→艮8(申刑寅)
+  // 甲午辛→离9(午自刑), 甲辰壬→巽4(辰自刑), 甲寅癸→巽4(寅刑巳)
+  const JI_XING_MAP: Record<string, number> = {
+    '戊': 3, // 甲子戊到震3
+    '己': 2, // 甲戌己到坤2
+    '庚': 8, // 甲申庚到艮8
+    '辛': 9, // 甲午辛到离9
+    '壬': 4, // 甲辰壬到巽4
+    '癸': 4, // 甲寅癸到巽4
+  }
+
   // === 构建结果 ===
   const palaces: QimenPalace[] = []
   for (let g = 1; g <= 9; g++) {
@@ -395,6 +408,7 @@ export function calculateQimen(date?: Date): QimenResult {
       baShen: shenInGong[g] || '值符',
       kongWang: kongGongs.has(g),
       yiMa: g === maGong,
+      jiXing: JI_XING_MAP[tianPan[g]] === g,  // 天盘干是六仪且落入相刑宫
     })
   }
 
