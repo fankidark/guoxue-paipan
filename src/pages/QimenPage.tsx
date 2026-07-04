@@ -135,12 +135,17 @@ function InfoItem({ label, value, color = 'text-dark-100' }: { label: string; va
   )
 }
 
-// 四柱卡片
+// 四柱卡片 — 天干地支上下分开显示
 function PillarCard({ label, value }: { label: string; value: string }) {
+  const gan = value[0] || ''
+  const zhi = value[1] || ''
   return (
     <div className="bg-dark-800/60 border border-dark-700/40 rounded-lg py-4 px-3 text-center">
       <div className="text-xs text-dark-500 mb-2">{label}</div>
-      <div className="text-xl font-bold text-dark-100 tracking-wider">{value}</div>
+      <div className="flex flex-col items-center gap-1">
+        <span className="text-xl font-bold text-dark-100">{gan}</span>
+        <span className="text-xl font-bold text-dark-100">{zhi}</span>
+      </div>
     </div>
   )
 }
