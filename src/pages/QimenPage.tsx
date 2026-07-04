@@ -135,7 +135,26 @@ function InfoItem({ label, value, color = 'text-dark-100' }: { label: string; va
   )
 }
 
-// 四柱卡片 — 天干地支上下分开显示
+// 天干五行颜色
+const GAN_COLOR: Record<string, string> = {
+  '甲': 'text-green-400', '乙': 'text-green-400',   // 木
+  '丙': 'text-red-400', '丁': 'text-red-400',       // 火
+  '戊': 'text-yellow-400', '己': 'text-yellow-400', // 土
+  '庚': 'text-gray-300', '辛': 'text-gray-300',     // 金
+  '壬': 'text-blue-400', '癸': 'text-blue-400',     // 水
+}
+
+// 地支五行颜色
+const ZHI_COLOR: Record<string, string> = {
+  '子': 'text-blue-400', '丑': 'text-yellow-400',
+  '寅': 'text-green-400', '卯': 'text-green-400',
+  '辰': 'text-yellow-400', '巳': 'text-red-400',
+  '午': 'text-red-400', '未': 'text-yellow-400',
+  '申': 'text-gray-300', '酉': 'text-gray-300',
+  '戌': 'text-yellow-400', '亥': 'text-blue-400',
+}
+
+// 四柱卡片 — 天干地支上下分开 + 五行颜色
 function PillarCard({ label, value }: { label: string; value: string }) {
   const gan = value[0] || ''
   const zhi = value[1] || ''
@@ -143,8 +162,8 @@ function PillarCard({ label, value }: { label: string; value: string }) {
     <div className="bg-dark-800/60 border border-dark-700/40 rounded-lg py-4 px-3 text-center">
       <div className="text-xs text-dark-500 mb-2">{label}</div>
       <div className="flex flex-col items-center gap-1">
-        <span className="text-xl font-bold text-dark-100">{gan}</span>
-        <span className="text-xl font-bold text-dark-100">{zhi}</span>
+        <span className={`text-xl font-bold ${GAN_COLOR[gan] || 'text-dark-100'}`}>{gan}</span>
+        <span className={`text-xl font-bold ${ZHI_COLOR[zhi] || 'text-dark-100'}`}>{zhi}</span>
       </div>
     </div>
   )
