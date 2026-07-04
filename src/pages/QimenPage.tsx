@@ -324,8 +324,7 @@ function PalaceCell({ palace, monthZhi }: { palace: PalaceData; monthZhi: string
         {/* 八门旺衰 + 门迫 + 十二长生(含刑) */}
         <div className="flex items-center gap-1 text-[10px]">
           <span className="text-dark-500">
-            {menPo && <span className="text-pink-400">迫</span>}
-            {menStatus.gongWs}月{menStatus.monthWs}
+            {menPo ? <span className="text-pink-400">迫</span> : menStatus.gongWs}月{menStatus.monthWs}
           </span>
           {(diXing || diTwelve) && (
             <span className="text-amber-500/70">{diXing ? <span className="text-pink-400">刑</span> : ''}{diTwelve}</span>
