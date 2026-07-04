@@ -319,49 +319,29 @@ export default function QimenPage() {
             </div>
           </div>
 
-          {/* 年命纳音速查 */}
+          {/* 年命速查 */}
           <div className="card">
-            <h3 className="text-sm text-dark-400 font-medium mb-3">年命纳音速查</h3>
-            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-1.5 text-xs">
-              {[
-                ['1984甲子','海中金','金','甲'],['1985乙丑','海中金','金','乙'],
-                ['1986丙寅','炉中火','火','丙'],['1987丁卯','炉中火','火','丁'],
-                ['1988戊辰','大林木','木','戊'],['1989己巳','大林木','木','己'],
-                ['1990庚午','路旁土','土','庚'],['1991辛未','路旁土','土','辛'],
-                ['1992壬申','剑锋金','金','壬'],['1993癸酉','剑锋金','金','癸'],
-                ['1994甲戌','山头火','火','甲'],['1995乙亥','山头火','火','乙'],
-                ['1996丙子','涧下水','水','丙'],['1997丁丑','涧下水','水','丁'],
-                ['1998戊寅','城头土','土','戊'],['1999己卯','城头土','土','己'],
-                ['2000庚辰','白蜡金','金','庚'],['2001辛巳','白蜡金','金','辛'],
-                ['2002壬午','杨柳木','木','壬'],['2003癸未','杨柳木','木','癸'],
-                ['2004甲申','泉中水','水','甲'],['2005乙酉','泉中水','水','乙'],
-                ['2006丙戌','屋上土','土','丙'],['2007丁亥','屋上土','土','丁'],
-                ['2008戊子','霹雳火','火','戊'],['2009己丑','霹雳火','火','己'],
-                ['2010庚寅','松柏木','木','庚'],['2011辛卯','松柏木','木','辛'],
-                ['2012壬辰','长流水','水','壬'],['2013癸巳','长流水','水','癸'],
-                ['2014甲午','沙中金','金','甲'],['2015乙未','沙中金','金','乙'],
-                ['2016丙申','山下火','火','丙'],['2017丁酉','山下火','火','丁'],
-                ['2018戊戌','平地木','木','戊'],['2019己亥','平地木','木','己'],
-                ['2020庚子','壁上土','土','庚'],['2021辛丑','壁上土','土','辛'],
-                ['2022壬寅','金箔金','金','壬'],['2023癸卯','金箔金','金','癸'],
-                ['2024甲辰','覆灯火','火','甲'],['2025乙巳','覆灯火','火','乙'],
-                ['2026丙午','天河水','水','丙'],['2027丁未','天河水','水','丁'],
-                ['2028戊申','大驿土','土','戊'],['2029己酉','大驿土','土','己'],
-                ['2030庚戌','钗钏金','金','庚'],['2031辛亥','钗钏金','金','辛'],
-                ['2032壬子','桑柘木','木','壬'],['2033癸丑','桑柘木','木','癸'],
-                ['2034甲寅','大溪水','水','甲'],['2035乙卯','大溪水','水','乙'],
-              ].map(([year, nayin, wx, gan]) => (
-                <div key={year} className="bg-dark-800/40 rounded px-2 py-1.5 flex justify-between items-center">
-                  <span className="text-dark-300">{year}</span>
-                  <span className="flex items-center gap-1">
-                    <span className={`${WX_TEXT_COLOR[wx]}`}>{nayin}</span>
-                    <span className={`text-[10px] ${ganColor(gan)}`}>{wx}</span>
-                  </span>
+            <h3 className="text-sm text-dark-400 font-medium mb-3">年命速查</h3>
+            <div className="space-y-4">
+              {/* 年份尾数→天干 */}
+              <div>
+                <div className="text-xs text-dark-300 font-medium mb-1.5">年份尾数对应天干</div>
+                <div className="grid grid-cols-5 sm:grid-cols-10 gap-1 text-xs">
+                  {[
+                    ['4','甲','木'],['5','乙','木'],['6','丙','火'],['7','丁','火'],['8','戊','土'],
+                    ['9','己','土'],['0','庚','金'],['1','辛','金'],['2','壬','水'],['3','癸','水'],
+                  ].map(([num, gan, wx]) => (
+                    <div key={num} className="bg-dark-800/40 rounded px-1.5 py-1.5 text-center">
+                      <div className="text-dark-300 font-bold">{num}</div>
+                      <div className={`font-medium ${WX_TEXT_COLOR[wx]}`}>{gan}{wx}</div>
+                    </div>
+                  ))}
                 </div>
-              ))}
-            </div>
-            <div className="mt-2 text-[10px] text-dark-600">
-              年命五行用于判断求测人与盘中各元素的生克关系。如2026年生人年命=水，遇火宫/火星则受克。找到出生年份对应的纳音五行即为年命。
+                <div className="mt-1 text-[10px] text-dark-600">记忆口诀：4甲5乙6丙7丁8戊9己0庚1辛2壬3癸</div>
+              </div>
+
+              {/* 年份查询 */}
+              <YearLookup />
             </div>
           </div>
 
@@ -511,6 +491,95 @@ export default function QimenPage() {
 }
 
 // === 子组件 ===
+
+// 年命速查组件
+const NAYIN_TABLE: Record<string, [string, string]> = {
+  '甲子':['海中金','金'],'乙丑':['海中金','金'],'丙寅':['炉中火','火'],'丁卯':['炉中火','火'],
+  '戊辰':['大林木','木'],'己巳':['大林木','木'],'庚午':['路旁土','土'],'辛未':['路旁土','土'],
+  '壬申':['剑锋金','金'],'癸酉':['剑锋金','金'],'甲戌':['山头火','火'],'乙亥':['山头火','火'],
+  '丙子':['涧下水','水'],'丁丑':['涧下水','水'],'戊寅':['城头土','土'],'己卯':['城头土','土'],
+  '庚辰':['白蜡金','金'],'辛巳':['白蜡金','金'],'壬午':['杨柳木','木'],'癸未':['杨柳木','木'],
+  '甲申':['泉中水','水'],'乙酉':['泉中水','水'],'丙戌':['屋上土','土'],'丁亥':['屋上土','土'],
+  '戊子':['霹雳火','火'],'己丑':['霹雳火','火'],'庚寅':['松柏木','木'],'辛卯':['松柏木','木'],
+  '壬辰':['长流水','水'],'癸巳':['长流水','水'],'甲午':['沙中金','金'],'乙未':['沙中金','金'],
+  '丙申':['山下火','火'],'丁酉':['山下火','火'],'戊戌':['平地木','木'],'己亥':['平地木','木'],
+  '庚子':['壁上土','土'],'辛丑':['壁上土','土'],'壬寅':['金箔金','金'],'癸卯':['金箔金','金'],
+  '甲辰':['覆灯火','火'],'乙巳':['覆灯火','火'],'丙午':['天河水','水'],'丁未':['天河水','水'],
+  '戊申':['大驿土','土'],'己酉':['大驿土','土'],'庚戌':['钗钏金','金'],'辛亥':['钗钏金','金'],
+  '壬子':['桑柘木','木'],'癸丑':['桑柘木','木'],'甲寅':['大溪水','水'],'乙卯':['大溪水','水'],
+  '丙辰':['沙中土','土'],'丁巳':['沙中土','土'],'戊午':['天上火','火'],'己未':['天上火','火'],
+  '庚申':['石榴木','木'],'辛酉':['石榴木','木'],'壬戌':['大海水','水'],'癸亥':['大海水','水'],
+}
+
+const TIAN_GAN_LIST = ['甲','乙','丙','丁','戊','己','庚','辛','壬','癸']
+const DI_ZHI_LIST = ['子','丑','寅','卯','辰','巳','午','未','申','酉','戌','亥']
+const SHENG_XIAO = ['鼠','牛','虎','兔','龙','蛇','马','羊','猴','鸡','狗','猪']
+
+function getYearInfo(year: number) {
+  // 天干: (year - 4) % 10
+  const ganIdx = (year - 4) % 10
+  const gan = TIAN_GAN_LIST[ganIdx]
+  // 地支: (year - 4) % 12
+  const zhiIdx = (year - 4) % 12
+  const zhi = DI_ZHI_LIST[zhiIdx]
+  const shengXiao = SHENG_XIAO[zhiIdx]
+  const gz = gan + zhi
+  const nayin = NAYIN_TABLE[gz]
+  return { gan, zhi, gz, shengXiao, nayinName: nayin?.[0] || '', nayinWx: nayin?.[1] || '' }
+}
+
+function YearLookup() {
+  const [year, setYear] = useState(new Date().getFullYear())
+  const info = getYearInfo(year)
+
+  return (
+    <div>
+      <div className="text-xs text-dark-300 font-medium mb-1.5">年份查询</div>
+      <div className="flex items-center gap-3 mb-3">
+        <input
+          type="number"
+          value={year}
+          onChange={(e) => setYear(parseInt(e.target.value) || 2026)}
+          className="input-field w-24 text-sm"
+          min={1900}
+          max={2100}
+        />
+        <span className="text-xs text-dark-400">年</span>
+      </div>
+      
+      {/* 结果展示 */}
+      <div className="bg-dark-800/40 border border-dark-700/30 rounded-lg p-3">
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs">
+          <div className="text-center">
+            <div className="text-dark-500 mb-1">干支</div>
+            <div className="text-lg font-bold">
+              <span className={ganColor(info.gan)}>{info.gan}</span>
+              <span className={zhiColor(info.zhi)}>{info.zhi}</span>
+            </div>
+          </div>
+          <div className="text-center">
+            <div className="text-dark-500 mb-1">生肖</div>
+            <div className="text-lg font-bold text-dark-100">{info.shengXiao}</div>
+          </div>
+          <div className="text-center">
+            <div className="text-dark-500 mb-1">纳音</div>
+            <div className={`text-sm font-bold ${WX_TEXT_COLOR[info.nayinWx]}`}>{info.nayinName}</div>
+          </div>
+          <div className="text-center">
+            <div className="text-dark-500 mb-1">年命五行</div>
+            <div className={`text-lg font-bold ${WX_TEXT_COLOR[info.nayinWx]}`}>{info.nayinWx}</div>
+          </div>
+        </div>
+      </div>
+
+      <div className="mt-2 text-[10px] text-dark-600 space-y-0.5">
+        <div>• 年命=纳音五行，用于判断求测人与盘中元素的生克关系</div>
+        <div>• 年命被克：不利，受压制。年命得生：有助力。年命克宫：耗费精力</div>
+        <div>• 天干由年份尾数决定，地支按12年一轮循环（子丑寅卯...）</div>
+      </div>
+    </div>
+  )
+}
 
 function InfoItem({ label, value, color = 'text-dark-100' }: { label: string; value: string; color?: string }) {
   return (
