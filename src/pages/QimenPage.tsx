@@ -264,7 +264,7 @@ function PalaceCell({ palace, monthZhi }: { palace: PalaceData; monthZhi: string
         <div className="flex items-center gap-1 text-[10px]">
           <span className="text-dark-500">{xingStatus.gongWs}月{xingStatus.monthWs}</span>
           {(tianXing || tianTwelve) && (
-            <span className="text-amber-500/70">{tianXing ? '刑' : ''}{tianTwelve}</span>
+            <span className="text-amber-500/70">{tianXing ? <span className="text-pink-400">刑</span> : ''}{tianTwelve}</span>
           )}
         </div>
 
@@ -278,7 +278,7 @@ function PalaceCell({ palace, monthZhi }: { palace: PalaceData; monthZhi: string
         <div className="flex items-center gap-1 text-[10px]">
           <span className="text-dark-500">{menStatus.gongWs}月{menStatus.monthWs}</span>
           {(diXing || diTwelve) && (
-            <span className="text-amber-500/70">{diXing ? '刑' : ''}{diTwelve}</span>
+            <span className="text-amber-500/70">{diXing ? <span className="text-pink-400">刑</span> : ''}{diTwelve}</span>
           )}
         </div>
       </div>
