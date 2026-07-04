@@ -183,7 +183,7 @@ export default function MeihuaPage() {
       let r: MeihuaResult
       if (mode === 'time') {
         const d = overrideDate || new Date(datetimeStr)
-        r = qiGuaByTime(d.getFullYear(), d.getMonth() + 1, d.getDate(), d.getHours())
+        r = qiGuaByTime(d)
       } else {
         if (!num1 || !num2) {
           setError('请输入两个有效数字')

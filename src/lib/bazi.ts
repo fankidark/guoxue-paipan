@@ -2,7 +2,7 @@
  * 八字排盘核心算法
  * 基于 lunar-javascript 库，扩展十神、大运、五行旺衰计算
  */
-import { Solar, Lunar } from 'lunar-javascript'
+import { Solar } from 'lunar-javascript'
 
 // ============================================================================
 // 基础常量
@@ -10,7 +10,7 @@ import { Solar, Lunar } from 'lunar-javascript'
 const TIAN_GAN = ['甲', '乙', '丙', '丁', '戊', '己', '庚', '辛', '壬', '癸']
 const DI_ZHI = ['子', '丑', '寅', '卯', '辰', '巳', '午', '未', '申', '酉', '戌', '亥']
 const WU_XING = ['木', '火', '土', '金', '水']
-const SHI_CHEN = ['子', '丑', '寅', '卯', '辰', '巳', '午', '未', '申', '酉', '戌', '亥']
+// const SHI_CHEN = ['子', '丑', '寅', '卯', '辰', '巳', '午', '未', '申', '酉', '戌', '亥']
 
 // 天干对应五行
 const GAN_WUXING: Record<string, string> = {
@@ -40,13 +40,13 @@ const ZHI_CANG_GAN: Record<string, string[]> = {
 
 // 十神对照（以日主为基准）
 // 生我为印，我生为食伤，克我为官杀，我克为财，同我为比劫
-const SHISHEN_MAP: Record<string, string> = {
-  '同阳': '比肩', '同阴': '劫财',
-  '生阳': '偏印', '生阴': '正印',
-  '泄阳': '食神', '泄阴': '伤官',
-  '克阳': '偏官', '克阴': '正官',
-  '财阳': '偏财', '财阴': '正财'
-}
+// const SHISHEN_MAP: Record<string, string> = {
+//   '同阳': '比肩', '同阴': '劫财',
+//   '生阳': '偏印', '生阴': '正印',
+//   '泄阳': '食神', '泄阴': '伤官',
+//   '克阳': '偏官', '克阴': '正官',
+//   '财阳': '偏财', '财阴': '正财'
+// }
 
 // 五行相生相克
 const SHENG: Record<string, string> = { '木': '火', '火': '土', '土': '金', '金': '水', '水': '木' }

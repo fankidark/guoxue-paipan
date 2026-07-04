@@ -126,16 +126,7 @@ function getChangedHexagram(hex: Hexagram, movingLine: number): Hexagram {
 function findGuaByLines(lines: number[]): Gua {
   // 八卦爻象对应
   const key = lines.join('')
-  const map: Record<string, number> = {
-    '111': 0, // 乾
-    '110': 1, // 兑 (注意巽也是110，通过先天数区分)
-    '101': 2, // 离
-    '001': 3, // 震
-    '011': 4, // 巽 (修正)
-    '010': 5, // 坎
-    '100': 6, // 艮
-    '000': 7, // 坤
-  }
+  // unused legacy map removed
   // 正确的八卦爻象（从下到上）
   const correctMap: Record<string, number> = {
     '111': 0, // 乾 ☰
