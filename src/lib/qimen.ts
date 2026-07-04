@@ -91,6 +91,8 @@ export interface QimenPalace {
   kongWang: boolean   // 是否空亡
   yiMa: boolean       // 是否有驿马
   jiXing: boolean     // 是否击刑
+  anGan?: string      // 暗干（六仪所遁的隐藏天干，三奇无暗干）
+  geJu?: string[]     // 本宫格局名称列表
 }
 
 export interface QimenResult {
@@ -109,6 +111,7 @@ export interface QimenResult {
   datetime: string
   fuYin: boolean      // 伏吟（天盘=地盘）
   fanYin: boolean     // 反吟（旋转半圈）
+  geJu: string[]      // 全局格局列表（如三奇得使等）
 }
 
 // ============================================================================
@@ -409,18 +412,100 @@ export function calculateQimen(date?: Date): QimenResult {
   // === 构建结果 ===
   const palaces: QimenPalace[] = []
   for (let g = 1; g <= 9; g++) {
+    // 暗干计算：六仪（戊己庚辛壬癸）有暗干甲，三奇（乙丙丁）无暗干
+    const tpGan = tianPan[g] || diPan[g] || ''
+    const LIU_YI = ['戊', '己', '庚', '辛', '壬', '癸']
+    const anGan = LIU_YI.includes(tpGan) ? '甲' : undefined
+
     palaces.push({
       gongNumber: g,
       gongName: GONG_GUA[g],
       diPanGan: diPan[g] || '',
-      tianPanGan: tianPan[g] || diPan[g] || '',
+      tianPanGan: tpGan,
       jiuXing: xingInGong[g] || '天禽',
       baMen: menInGong[g] || '中',
       baShen: shenInGong[g] || '值符',
       kongWang: kongGongs.has(g),
       yiMa: g === maGong,
       jiXing: JI_XING_MAP[tianPan[g]] === g,  // 天盘干是六仪且落入相刑宫
+      anGan,
+      geJu: [],  // 先置空，格局在下一步填充
     })
+  }
+
+  // === 第八步：计算宫位格局 ===
+  // 五行克制关系：克者→被克者
+  const WX_KE: Record<string, string> = {
+    '木': '土', '土': '水', '水': '火', '火': '金', '金': '木',
+  }
+  const GAN_WX: Record<string, string> = {
+    '甲': '木', '乙': '木', '丙': '火', '丁': '火', '戊': '土',
+    '己': '土', '庚': '金', '辛': '金', '壬': '水', '癸': '水',
+  }
+
+  // 全局格局（三奇得使等）
+  const globalGeJu: string[] = []
+
+  // 判断各宫格局
+  for (const p of palaces) {
+    const geJuList: string[] = []
+    const tian = p.tianPanGan
+    const di = p.diPanGan
+
+    // 1. 乙+庚同宫：日奇伏吟（天盘乙，地盘庚）
+    if (tian === '乙' && di === '庚') {
+      geJuList.push('日奇伏吟')
+    }
+
+    // 2. 丙+庚同宫：火入金乡（天盘丙，地盘庚）
+    if (tian === '丙' && di === '庚') {
+      geJuList.push('火入金乡')
+    }
+
+    // 3. 丁+庚同宫：天三门（天盘丁，地盘庚）
+    if (tian === '丁' && di === '庚') {
+      geJuList.push('天三门')
+    }
+
+    // 4. 天盘干克地盘干：奇仪相克
+    const tianWx = GAN_WX[tian]
+    const diWx = GAN_WX[di]
+    if (tianWx && diWx && WX_KE[tianWx] === diWx && tian !== di) {
+      geJuList.push('奇仪相克')
+    }
+
+    // 5. 庚落值符宫：庚格（地盘庚在值符目标宫）
+    if (p.gongNumber === zhiFuDestGong && (tian === '庚' || di === '庚')) {
+      geJuList.push('庚格')
+    }
+
+    p.geJu = geJuList
+  }
+
+  // === 三奇得使判断（乙丙丁同时出现在值使门、值符宫等关键位置）===
+  // 简化实现：三奇（乙丙丁）均出现在天盘时，判断三奇得使格局
+  const tianPanGans = Object.values(tianPan)
+  const hasYi = tianPanGans.includes('乙')
+  const hasBing = tianPanGans.includes('丙')
+  const hasDing = tianPanGans.includes('丁')
+  if (hasYi && hasBing && hasDing) {
+    // 天遁：丙+天辅+生门同宫
+    // 地遁：乙+六合+开门同宫
+    // 人遁：丁+太阴+休门同宫
+    for (const p of palaces) {
+      if (p.tianPanGan === '丙' && p.jiuXing === '天辅' && p.baMen === '生门') {
+        globalGeJu.push('天遁')
+        p.geJu = [...(p.geJu || []), '天遁']
+      }
+      if (p.tianPanGan === '乙' && p.baShen === '六合' && p.baMen === '开门') {
+        globalGeJu.push('地遁')
+        p.geJu = [...(p.geJu || []), '地遁']
+      }
+      if (p.tianPanGan === '丁' && p.baShen === '太阴' && p.baMen === '休门') {
+        globalGeJu.push('人遁')
+        p.geJu = [...(p.geJu || []), '人遁']
+      }
+    }
   }
 
   return {
@@ -436,6 +521,7 @@ export function calculateQimen(date?: Date): QimenResult {
     datetime: `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')} ${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}`,
     fuYin,
     fanYin,
+    geJu: globalGeJu,
   }
 }
 
