@@ -211,12 +211,25 @@ export default function QimenPage() {
               <h3 className="text-sm text-dark-400 font-medium">九宫盘局</h3>
             </div>
             
-            <div className="grid grid-cols-3 gap-1.5">
-              {LUOSHU_ORDER.map((gongNum) => {
-                const palace = result.palaces.find(p => p.gongNumber === gongNum)
-                if (!palace) return <div key={gongNum} />
-                return <PalaceCell key={gongNum} palace={palace} monthZhi={monthZhi} />
-              })}
+            {/* 方位标记 + 九宫格 */}
+            <div className="relative">
+              {/* 上方位：南 */}
+              <div className="text-center text-[10px] text-dark-500 mb-1">南</div>
+              <div className="flex items-center gap-1">
+                {/* 左方位：东 */}
+                <div className="text-[10px] text-dark-500 w-4 text-center shrink-0">东</div>
+                <div className="grid grid-cols-3 gap-1.5 flex-1">
+                  {LUOSHU_ORDER.map((gongNum) => {
+                    const palace = result.palaces.find(p => p.gongNumber === gongNum)
+                    if (!palace) return <div key={gongNum} />
+                    return <PalaceCell key={gongNum} palace={palace} monthZhi={monthZhi} />
+                  })}
+                </div>
+                {/* 右方位：西 */}
+                <div className="text-[10px] text-dark-500 w-4 text-center shrink-0">西</div>
+              </div>
+              {/* 下方位：北 */}
+              <div className="text-center text-[10px] text-dark-500 mt-1">北</div>
             </div>
           </div>
 
@@ -293,14 +306,15 @@ export default function QimenPage() {
             <h3 className="text-sm text-dark-400 font-medium mb-3">时辰五行速查</h3>
             <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 gap-1.5 text-xs">
               {[
-                ['子时','23-01','水'],['丑时','01-03','土'],['寅时','03-05','木'],
-                ['卯时','05-07','木'],['辰时','07-09','土'],['巳时','09-11','火'],
-                ['午时','11-13','火'],['未时','13-15','土'],['申时','15-17','金'],
-                ['酉时','17-19','金'],['戌时','19-21','土'],['亥时','21-23','水'],
-              ].map(([name, time, wx]) => (
+                ['子时','23:00-01:00','深夜/凌晨','水'],['丑时','01:00-03:00','凌晨','土'],['寅时','03:00-05:00','黎明前','木'],
+                ['卯时','05:00-07:00','日出/早晨','木'],['辰时','07:00-09:00','早餐后','土'],['巳时','09:00-11:00','上午','火'],
+                ['午时','11:00-13:00','中午','火'],['未时','13:00-15:00','下午','土'],['申时','15:00-17:00','傍晚前','金'],
+                ['酉时','17:00-19:00','傍晚/下班','金'],['戌时','19:00-21:00','晚上','土'],['亥时','21:00-23:00','深夜前','水'],
+              ].map(([name, time, modern, wx]) => (
                 <div key={name} className="bg-dark-800/40 rounded px-2 py-1.5 text-center">
                   <div className={`font-medium ${WX_TEXT_COLOR[wx]}`}>{name}</div>
-                  <div className="text-dark-500 text-[10px]">{time}</div>
+                  <div className="text-dark-400 text-[10px]">{time}</div>
+                  <div className="text-dark-600 text-[9px]">{modern}</div>
                 </div>
               ))}
             </div>
@@ -355,6 +369,38 @@ export default function QimenPage() {
                   ))}
                 </div>
               </div>
+            </div>
+          </div>
+
+          {/* 九宫原始宫位参考 */}
+          <div className="card">
+            <h3 className="text-sm text-dark-400 font-medium mb-3">九宫原始宫位（本位）</h3>
+            <div className="grid grid-cols-3 gap-1 text-xs">
+              {[
+                { gong: 4, gua: '巽', dir: '东南', wx: '木', xing: '天辅', men: '杜门', shen: '—' },
+                { gong: 9, gua: '离', dir: '南', wx: '火', xing: '天英', men: '景门', shen: '—' },
+                { gong: 2, gua: '坤', dir: '西南', wx: '土', xing: '天芮', men: '死门', shen: '—' },
+                { gong: 3, gua: '震', dir: '东', wx: '木', xing: '天冲', men: '伤门', shen: '—' },
+                { gong: 5, gua: '中', dir: '中', wx: '土', xing: '天禽', men: '—', shen: '—' },
+                { gong: 7, gua: '兑', dir: '西', wx: '金', xing: '天柱', men: '惊门', shen: '—' },
+                { gong: 8, gua: '艮', dir: '东北', wx: '土', xing: '天任', men: '生门', shen: '—' },
+                { gong: 1, gua: '坎', dir: '北', wx: '水', xing: '天蓬', men: '休门', shen: '—' },
+                { gong: 6, gua: '乾', dir: '西北', wx: '金', xing: '天心', men: '开门', shen: '—' },
+              ].map((p) => (
+                <div key={p.gong} className="bg-dark-800/40 border border-dark-700/30 rounded p-2 text-center">
+                  <div className="flex items-center justify-between mb-1">
+                    <span className={`font-bold ${WX_TEXT_COLOR[p.wx]}`}>{p.gua}{p.gong}</span>
+                    <span className="text-dark-500 text-[10px]">{p.dir}·{p.wx}</span>
+                  </div>
+                  <div className={`${xingColor(p.xing)}`}>{p.xing}</div>
+                  <div className={`${menColor(p.men)}`}>{p.men}</div>
+                </div>
+              ))}
+            </div>
+            <div className="mt-3 text-[11px] text-dark-500">
+              <div className="font-medium text-dark-400 mb-1">八神排列顺序</div>
+              <div>值符 → 螣蛇 → 太阴 → 六合 → 白虎 → 玄武 → 九地 → 九天</div>
+              <div className="mt-1 text-dark-600">（八神无固定本位宫，从值符目标宫起按阳遁顺时针/阴遁逆时针排列）</div>
             </div>
           </div>
         </>
