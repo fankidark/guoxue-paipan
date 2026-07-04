@@ -9,7 +9,7 @@ import {
   getXingStatus, getMenStatus, getGanTwelveInGong, isMenPo
 } from '../lib/qimen-status'
 import { getGanTwelveInGongDouble, hasXingInGong } from '../lib/qimen-twelve'
-import { XING_DETAIL, MEN_DETAIL, SHEN_DETAIL, SPECIAL_DETAIL } from '../lib/qimen-details'
+import { XING_DETAIL, MEN_DETAIL, SHEN_DETAIL, SPECIAL_DETAIL, WANGSHUAI_DETAIL, TWELVE_DETAIL } from '../lib/qimen-details'
 
 // 洛书九宫排列：巽4|离9|坤2 / 震3|中5|兑7 / 艮8|坎1|乾6
 const LUOSHU_ORDER = [4, 9, 2, 3, 5, 7, 8, 1, 6]
@@ -569,6 +569,33 @@ function showSpecialDetail(key: string) {
   ))
 }
 
+function showWsDetail(ws: string) {
+  const d = WANGSHUAI_DETAIL[ws]
+  if (!d) return
+  globalShowDetail(`旺衰·${d.title}`, (
+    <div className="space-y-2">
+      {d.desc.split('\n').map((line, i) => <p key={i}>{line}</p>)}
+    </div>
+  ))
+}
+
+function showTwelveDetail(state: string) {
+  // 从缩写还原全称
+  const SHORT_TO_FULL: Record<string, string> = {
+    '生': '长生', '沐': '沐浴', '冠': '冠带', '临': '临官', '旺': '帝旺',
+    '衰': '衰', '病': '病', '死': '死', '墓': '墓', '绝': '绝', '胎': '胎', '养': '养',
+  }
+  const full = SHORT_TO_FULL[state] || state
+  const d = TWELVE_DETAIL[full]
+  if (!d) return
+  globalShowDetail(`十二长生·${d.title}`, (
+    <div className="space-y-2">
+      <p>{d.desc}</p>
+      <div><span className="text-dark-400 font-medium">力量：</span>{d.力量}</div>
+    </div>
+  ))
+}
+
 // === 子组件 ===
 
 // 年命速查组件
@@ -748,11 +775,17 @@ function PalaceCell({ palace, monthZhi }: { palace: PalaceData; monthZhi: string
           <span className={`text-sm font-bold ${ganColor(palace.tianPanGan)}`}>{palace.tianPanGan}</span>
         </div>
         
-        {/* 九星旺衰 + 十二长生(含刑，刑可点击) */}
+        {/* 九星旺衰(可点击) + 十二长生(含刑，均可点击) */}
         <div className="flex items-center gap-1 text-[10px]">
-          <span className="text-dark-500">{xingStatus.gongWs}月{xingStatus.monthWs}</span>
+          <span className="text-dark-500 cursor-pointer hover:text-dark-300" onClick={() => showWsDetail(xingStatus.gongWs)}>{xingStatus.gongWs}</span>
+          <span className="text-dark-500 cursor-pointer hover:text-dark-300" onClick={() => showWsDetail(xingStatus.monthWs)}>月{xingStatus.monthWs}</span>
           {(tianXing || tianTwelve) && (
-            <span className="text-amber-500/70">{tianXing ? <span className="text-pink-400 cursor-pointer hover:underline" onClick={() => showSpecialDetail('刑')}>刑</span> : ''}{tianTwelve}</span>
+            <span className="text-amber-500/70">
+              {tianXing ? <span className="text-pink-400 cursor-pointer hover:underline" onClick={() => showSpecialDetail('刑')}>刑</span> : ''}
+              {tianTwelve.split('').map((ch, i) => (
+                <span key={i} className="cursor-pointer hover:underline" onClick={() => showTwelveDetail(ch)}>{ch}</span>
+              ))}
+            </span>
           )}
         </div>
 
@@ -762,13 +795,19 @@ function PalaceCell({ palace, monthZhi }: { palace: PalaceData; monthZhi: string
           <span className={`text-xs ${ganColor(palace.diPanGan)}`}>{palace.diPanGan}</span>
         </div>
         
-        {/* 八门旺衰 + 门迫(可点击) + 十二长生(含刑可点击) */}
+        {/* 八门旺衰(可点击) + 门迫(可点击) + 十二长生(含刑，均可点击) */}
         <div className="flex items-center gap-1 text-[10px]">
           <span className="text-dark-500">
-            {menPo ? <span className="text-pink-400 cursor-pointer hover:underline" onClick={() => showSpecialDetail('迫')}>迫</span> : menStatus.gongWs}月{menStatus.monthWs}
+            {menPo ? <span className="text-pink-400 cursor-pointer hover:underline" onClick={() => showSpecialDetail('迫')}>迫</span> : <span className="cursor-pointer hover:text-dark-300" onClick={() => showWsDetail(menStatus.gongWs)}>{menStatus.gongWs}</span>}
+            <span className="cursor-pointer hover:text-dark-300" onClick={() => showWsDetail(menStatus.monthWs)}>月{menStatus.monthWs}</span>
           </span>
           {(diXing || diTwelve) && (
-            <span className="text-amber-500/70">{diXing ? <span className="text-pink-400 cursor-pointer hover:underline" onClick={() => showSpecialDetail('刑')}>刑</span> : ''}{diTwelve}</span>
+            <span className="text-amber-500/70">
+              {diXing ? <span className="text-pink-400 cursor-pointer hover:underline" onClick={() => showSpecialDetail('刑')}>刑</span> : ''}
+              {diTwelve.split('').map((ch, i) => (
+                <span key={i} className="cursor-pointer hover:underline" onClick={() => showTwelveDetail(ch)}>{ch}</span>
+              ))}
+            </span>
           )}
         </div>
       </div>
