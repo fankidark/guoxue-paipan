@@ -299,18 +299,25 @@ export function calculateQimen(date?: Date): QimenResult {
   }
   if (zhiFuOrigGong === 5) zhiShiMen = '死门' // 中宫寄坤，本位死门
   
-  // 值使门落宫：从值符原宫起甲子（旬首），按九宫顺序数到时干
-  // 计算时干在旬中的序号（甲子=1, 乙丑=2, ... 庚午=7）
+  // 值使门落宫：从值符原宫起甲子（旬首），数到时干
+  // 阳遁：按九宫顺序（1→2→3→4→6→7→8→9，跳5）
+  // 阴遁：按九宫逆序（从原宫往回数，跳5）
   const hourGanIdx = TIAN_GAN.indexOf(hourGZ[0])
   const xunGanIdx = TIAN_GAN.indexOf(xunShou[0]) // 甲=0
-  let stepsToHour = (hourGanIdx - xunGanIdx + 10) % 10 // 从旬首到时干的步数
+  let stepsToHour = (hourGanIdx - xunGanIdx + 10) % 10
   
-  // 从值符原宫起，按九宫顺序数 stepsToHour 步
+  // 从值符原宫按方向数 stepsToHour 步
   let zhiShiDestGong = zhiFuOrigGong
   for (let i = 0; i < stepsToHour; i++) {
-    zhiShiDestGong = ((zhiShiDestGong) % 9) + 1 // 按 1→2→3→...→9→1 顺序
-    // 跳过中宫5（中宫寄坤2）
-    if (zhiShiDestGong === 5) zhiShiDestGong = ((zhiShiDestGong) % 9) + 1
+    if (isYangDun) {
+      zhiShiDestGong = zhiShiDestGong + 1
+      if (zhiShiDestGong === 5) zhiShiDestGong = 6
+      if (zhiShiDestGong > 9) zhiShiDestGong = 1
+    } else {
+      zhiShiDestGong = zhiShiDestGong - 1
+      if (zhiShiDestGong === 5) zhiShiDestGong = 4
+      if (zhiShiDestGong < 1) zhiShiDestGong = 9
+    }
   }
   
   // 八门排列：值使门放到目标宫，其余按外八宫顺时针排
@@ -336,11 +343,17 @@ export function calculateQimen(date?: Date): QimenResult {
   menInGong[5] = '中' // 中宫无门
 
   // === 第六步：排八神 ===
-  // 值符（八神）从天盘值符目标宫起，按外八宫顺时针排
+  // 值符（八神）从天盘值符目标宫起
+  // 阳遁：顺时针排；阴遁：逆时针排
   const shenInGong: Record<number, string> = {}
   const shenDestIdx = OUTER_CW.indexOf(zhiFuDestGong)
   for (let i = 0; i < 8; i++) {
-    const gong = OUTER_CW[(shenDestIdx + i) % 8]
+    let gong: number
+    if (isYangDun) {
+      gong = OUTER_CW[(shenDestIdx + i) % 8]
+    } else {
+      gong = OUTER_CW[(shenDestIdx - i + 8) % 8]
+    }
     shenInGong[gong] = BA_SHEN[i]
   }
   shenInGong[5] = shenInGong[2] || '白虎' // 中宫寄坤
