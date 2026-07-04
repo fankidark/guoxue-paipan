@@ -16,18 +16,18 @@ function formatDateTime(d: Date): string {
   return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}T${String(d.getHours()).padStart(2, '0')}:${String(d.getMinutes()).padStart(2, '0')}`
 }
 
-// 天干五行颜色
+// 天干五行颜色（金黄/木绿/水蓝/火红/土棕）
 const GAN_COLOR: Record<string, string> = {
-  '甲': 'text-green-400', '乙': 'text-green-400',
-  '丙': 'text-red-400', '丁': 'text-red-400',
-  '戊': 'text-yellow-400', '己': 'text-yellow-400',
-  '庚': 'text-gray-300', '辛': 'text-gray-300',
-  '壬': 'text-blue-400', '癸': 'text-blue-400',
+  '甲': 'text-green-400', '乙': 'text-green-400',     // 木·绿
+  '丙': 'text-red-400', '丁': 'text-red-400',         // 火·红
+  '戊': 'text-amber-600', '己': 'text-amber-600',     // 土·棕
+  '庚': 'text-yellow-400', '辛': 'text-yellow-400',   // 金·黄
+  '壬': 'text-blue-400', '癸': 'text-blue-400',       // 水·蓝
 }
 const ZHI_COLOR: Record<string, string> = {
-  '子': 'text-blue-400', '丑': 'text-yellow-400', '寅': 'text-green-400', '卯': 'text-green-400',
-  '辰': 'text-yellow-400', '巳': 'text-red-400', '午': 'text-red-400', '未': 'text-yellow-400',
-  '申': 'text-gray-300', '酉': 'text-gray-300', '戌': 'text-yellow-400', '亥': 'text-blue-400',
+  '子': 'text-blue-400', '丑': 'text-amber-600', '寅': 'text-green-400', '卯': 'text-green-400',
+  '辰': 'text-amber-600', '巳': 'text-red-400', '午': 'text-red-400', '未': 'text-amber-600',
+  '申': 'text-yellow-400', '酉': 'text-yellow-400', '戌': 'text-amber-600', '亥': 'text-blue-400',
 }
 
 export default function QimenPage() {
@@ -163,17 +163,17 @@ interface PalaceData {
   baShen: string
 }
 
-// 宫位五行颜色（卦名和数字共用）
+// 宫位五行颜色（金黄/木绿/水蓝/火红/土棕）
 const GONG_COLOR: Record<number, string> = {
-  1: 'text-blue-400',    // 坎·水
-  2: 'text-yellow-400',  // 坤·土
-  3: 'text-green-400',   // 震·木
-  4: 'text-green-400',   // 巽·木
-  5: 'text-yellow-400',  // 中·土
-  6: 'text-gray-300',    // 乾·金
-  7: 'text-gray-300',    // 兑·金
-  8: 'text-yellow-400',  // 艮·土
-  9: 'text-red-400',     // 离·火
+  1: 'text-blue-400',    // 坎·水·蓝
+  2: 'text-amber-600',   // 坤·土·棕
+  3: 'text-green-400',   // 震·木·绿
+  4: 'text-green-400',   // 巽·木·绿
+  5: 'text-amber-600',   // 中·土·棕
+  6: 'text-yellow-400',  // 乾·金·黄
+  7: 'text-yellow-400',  // 兑·金·黄
+  8: 'text-amber-600',   // 艮·土·棕
+  9: 'text-red-400',     // 离·火·红
 }
 
 function PalaceCell({ palace, monthZhi }: { palace: PalaceData; monthZhi: string }) {

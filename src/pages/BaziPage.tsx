@@ -9,16 +9,16 @@ import type { BaziResult } from '../lib/bazi'
 const WX_COLOR: Record<string, string> = {
   '木': 'text-green-400',
   '火': 'text-red-400',
-  '土': 'text-yellow-400',
-  '金': 'text-gray-300',
+  '土': 'text-amber-600',
+  '金': 'text-yellow-400',
   '水': 'text-blue-400',
 }
 
 const WX_BG: Record<string, string> = {
   '木': 'bg-green-400',
   '火': 'bg-red-400',
-  '土': 'bg-yellow-400',
-  '金': 'bg-gray-300',
+  '土': 'bg-amber-600',
+  '金': 'bg-yellow-400',
   '水': 'bg-blue-400',
 }
 
