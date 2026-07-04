@@ -6,9 +6,10 @@ import { calculateQimen } from '../lib/qimen'
 import type { QimenResult } from '../lib/qimen'
 import {
   GONG_GUA, JIEQI_MONTH_ZHI, XING_WUXING, MEN_WUXING,
-  getXingStatus, getMenStatus, getGanTwelveInGong
+  getXingStatus, getMenStatus, getGanTwelveInGong, isMenPo
 } from '../lib/qimen-status'
 import { getGanTwelveInGongDouble, hasXingInGong } from '../lib/qimen-twelve'
+import { XING_DETAIL, MEN_DETAIL, SHEN_DETAIL, SPECIAL_DETAIL } from '../lib/qimen-details'
 
 // 洛书九宫排列：巽4|离9|坤2 / 震3|中5|兑7 / 艮8|坎1|乾6
 const LUOSHU_ORDER = [4, 9, 2, 3, 5, 7, 8, 1, 6]
@@ -136,6 +137,7 @@ export default function QimenPage() {
   const monthZhi = result ? (JIEQI_MONTH_ZHI[result.jieQi] || '午') : '午'
 
   return (
+    <DetailProvider>
     <div className="space-y-5">
       {/* 输入区 */}
       <div className="card">
@@ -487,7 +489,84 @@ export default function QimenPage() {
         </>
       )}
     </div>
+    </DetailProvider>
   )
+}
+function DetailModal({ title, content, onClose }: { title: string; content: React.ReactNode; onClose: () => void }) {
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4" onClick={onClose}>
+      <div className="absolute inset-0 bg-black/60" />
+      <div className="relative bg-dark-900 border border-dark-700 rounded-xl max-w-md w-full max-h-[80vh] overflow-y-auto p-5" onClick={e => e.stopPropagation()}>
+        <div className="flex items-center justify-between mb-3">
+          <h3 className="text-base font-bold text-dark-100">{title}</h3>
+          <button onClick={onClose} className="text-dark-500 hover:text-dark-200 text-xl">×</button>
+        </div>
+        <div className="text-sm text-dark-300 space-y-3">{content}</div>
+      </div>
+    </div>
+  )
+}
+
+// 全局弹窗状态（简单方案）
+let globalShowDetail: (title: string, content: React.ReactNode) => void = () => {}
+
+function DetailProvider({ children }: { children: React.ReactNode }) {
+  const [detail, setDetail] = useState<{ title: string; content: React.ReactNode } | null>(null)
+  globalShowDetail = (title, content) => setDetail({ title, content })
+  return (
+    <>
+      {children}
+      {detail && <DetailModal title={detail.title} content={detail.content} onClose={() => setDetail(null)} />}
+    </>
+  )
+}
+
+function showXingDetail(name: string) {
+  const d = XING_DETAIL[name]
+  if (!d) return
+  globalShowDetail(`${name}（${d.wx}·${d.ji}）`, (
+    <div className="space-y-2">
+      <p>{d.desc}</p>
+      <div><span className="text-dark-400 font-medium">象意：</span>{d.象意}</div>
+      <div><span className="text-dark-400 font-medium">主事：</span>{d.主事}</div>
+    </div>
+  ))
+}
+
+function showMenDetail(name: string) {
+  const d = MEN_DETAIL[name]
+  if (!d) return
+  globalShowDetail(`${name}（${d.wx}·${d.ji}）`, (
+    <div className="space-y-2">
+      <p>{d.desc}</p>
+      <div><span className="text-dark-400 font-medium">象意：</span>{d.象意}</div>
+      <div><span className="text-dark-400 font-medium">主事：</span>{d.主事}</div>
+    </div>
+  ))
+}
+
+function showShenDetail(name: string) {
+  const d = SHEN_DETAIL[name]
+  if (!d) return
+  globalShowDetail(`${name}（${d.wx}·${d.ji}）`, (
+    <div className="space-y-2">
+      <p>{d.desc}</p>
+      <div><span className="text-dark-400 font-medium">象意：</span>{d.象意}</div>
+      <div><span className="text-dark-400 font-medium">主事：</span>{d.主事}</div>
+    </div>
+  ))
+}
+
+function showSpecialDetail(key: string) {
+  const d = SPECIAL_DETAIL[key]
+  if (!d) return
+  globalShowDetail(d.title, (
+    <div className="space-y-2">
+      <p>{d.desc}</p>
+      <div><span className="text-dark-400 font-medium">影响：</span>{d.影响}</div>
+      <div><span className="text-dark-400 font-medium">化解：</span>{d.化解}</div>
+    </div>
+  ))
 }
 
 // === 子组件 ===
@@ -659,36 +738,36 @@ function PalaceCell({ palace, monthZhi }: { palace: PalaceData; monthZhi: string
 
       {/* 主内容区 */}
       <div className="flex flex-col items-center gap-[3px] pt-4 pb-3">
-        {/* 八神 */}
-        <span className={`text-xs font-medium ${shenColor(palace.baShen)}`}>{palace.baShen}</span>
+        {/* 八神（可点击） */}
+        <span className={`text-xs font-medium cursor-pointer hover:underline ${shenColor(palace.baShen)}`} onClick={() => showShenDetail(palace.baShen)}>{palace.baShen}</span>
         
-        {/* 九星 + 天盘干 */}
+        {/* 九星 + 天盘干（九星可点击） */}
         <div className="flex items-center gap-1.5">
-          <span className={`text-xs ${xingColor(palace.jiuXing)}`}>{palace.jiuXing}</span>
+          <span className={`text-xs cursor-pointer hover:underline ${xingColor(palace.jiuXing)}`} onClick={() => showXingDetail(palace.jiuXing)}>{palace.jiuXing}</span>
           <span className={`text-sm font-bold ${ganColor(palace.tianPanGan)}`}>{palace.tianPanGan}</span>
         </div>
         
-        {/* 九星旺衰 + 十二长生(含刑) */}
+        {/* 九星旺衰 + 十二长生(含刑，刑可点击) */}
         <div className="flex items-center gap-1 text-[10px]">
           <span className="text-dark-500">{xingStatus.gongWs}月{xingStatus.monthWs}</span>
           {(tianXing || tianTwelve) && (
-            <span className="text-amber-500/70">{tianXing ? <span className="text-pink-400">刑</span> : ''}{tianTwelve}</span>
+            <span className="text-amber-500/70">{tianXing ? <span className="text-pink-400 cursor-pointer hover:underline" onClick={() => showSpecialDetail('刑')}>刑</span> : ''}{tianTwelve}</span>
           )}
         </div>
 
-        {/* 八门 + 地盘干 */}
+        {/* 八门 + 地盘干（八门可点击） */}
         <div className="flex items-center gap-1.5 mt-1">
-          <span className={`text-xs font-medium ${menColor(palace.baMen)}`}>{palace.baMen}</span>
+          <span className={`text-xs font-medium cursor-pointer hover:underline ${menColor(palace.baMen)}`} onClick={() => showMenDetail(palace.baMen)}>{palace.baMen}</span>
           <span className={`text-xs ${ganColor(palace.diPanGan)}`}>{palace.diPanGan}</span>
         </div>
         
-        {/* 八门旺衰 + 门迫 + 十二长生(含刑) */}
+        {/* 八门旺衰 + 门迫(可点击) + 十二长生(含刑可点击) */}
         <div className="flex items-center gap-1 text-[10px]">
           <span className="text-dark-500">
-            {menStatus.gongWs === '迫' ? <span className="text-pink-400">迫</span> : menStatus.gongWs}月{menStatus.monthWs}
+            {menPo ? <span className="text-pink-400 cursor-pointer hover:underline" onClick={() => showSpecialDetail('迫')}>迫</span> : menStatus.gongWs}月{menStatus.monthWs}
           </span>
           {(diXing || diTwelve) && (
-            <span className="text-amber-500/70">{diXing ? <span className="text-pink-400">刑</span> : ''}{diTwelve}</span>
+            <span className="text-amber-500/70">{diXing ? <span className="text-pink-400 cursor-pointer hover:underline" onClick={() => showSpecialDetail('刑')}>刑</span> : ''}{diTwelve}</span>
           )}
         </div>
       </div>
