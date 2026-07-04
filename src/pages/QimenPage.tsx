@@ -244,7 +244,7 @@ function PalaceCell({ palace, monthZhi }: { palace: PalaceData; monthZhi: string
           <span className={`text-sm font-bold ${ganColor(palace.tianPanGan)}`}>{palace.tianPanGan}</span>
         </div>
         
-        {/* 九星旺衰 + 天盘干十二长生 */}
+        {/* 九星旺衰 + 十二长生 */}
         <div className="flex items-center gap-1 text-[10px]">
           <span className="text-dark-500">{xingStatus.gongWs}月{xingStatus.monthWs}</span>
           {tianGanTwelve && <span className="text-amber-500/70">{tianGanTwelve}</span>}
@@ -256,7 +256,7 @@ function PalaceCell({ palace, monthZhi }: { palace: PalaceData; monthZhi: string
           <span className={`text-xs ${ganColor(palace.diPanGan)}`}>{palace.diPanGan}</span>
         </div>
         
-        {/* 八门旺衰 + 地盘干十二长生 */}
+        {/* 八门旺衰 + 十二长生 */}
         <div className="flex items-center gap-1 text-[10px]">
           <span className="text-dark-500">{menStatus.gongWs}月{menStatus.monthWs}</span>
           {diGanTwelve && <span className="text-amber-500/70">{diGanTwelve}</span>}

@@ -54,9 +54,9 @@ const GAN_WX: Record<string, string> = {
   '己': '土', '庚': '金', '辛': '金', '壬': '水', '癸': '水'
 }
 
-// 五行旺衰表：key=月令五行, value={旺/相/休/囚/死}
-// 规则：当令者旺，令生者相，生令者休，克令者囚，令克者死
-const WANGSHUAI_TABLE: Record<string, Record<string, string>> = {
+// 五行旺衰表（八门/标准）：key=令(宫/月)五行, value={当令者旺, 生我者休, 我生者相, 克我者囚, 我克者死}
+// 规则：当令者旺，我生者相，生我者休，克我者囚，我克者死
+const WANGSHUAI_MEN: Record<string, Record<string, string>> = {
   '木': { '木': '旺', '火': '相', '水': '休', '金': '囚', '土': '死' },
   '火': { '火': '旺', '土': '相', '木': '休', '水': '囚', '金': '死' },
   '土': { '土': '旺', '金': '相', '火': '休', '木': '囚', '水': '死' },
@@ -64,14 +64,22 @@ const WANGSHUAI_TABLE: Record<string, Record<string, string>> = {
   '水': { '水': '旺', '木': '相', '金': '休', '土': '囚', '火': '死' },
 }
 
+// 九星旺衰表（特殊！）：与我同行=相，我生者=旺，生我者=休，克我者=囚，我克者=废
+// 注意九星用"废"而非"死"
+const WANGSHUAI_XING: Record<string, Record<string, string>> = {
+  '木': { '木': '相', '水': '旺', '火': '休', '金': '囚', '土': '废' },
+  '火': { '火': '相', '木': '旺', '土': '休', '水': '囚', '金': '废' },
+  '土': { '土': '相', '火': '旺', '金': '休', '木': '囚', '水': '废' },
+  '金': { '金': '相', '土': '旺', '水': '休', '火': '囚', '木': '废' },
+  '水': { '水': '相', '金': '旺', '木': '休', '土': '囚', '火': '废' },
+}
+
 /**
- * 计算五行在当前月令下的旺衰
- * @param wuxing 被判断的五行
- * @param monthZhi 月令地支
+ * 计算五行在当前月令下的旺衰（八门用）
  */
 export function getWangShuai(wuxing: string, monthZhi: string): string {
   const monthWx = ZHI_WX[monthZhi] || '土'
-  return WANGSHUAI_TABLE[monthWx]?.[wuxing] || '休'
+  return WANGSHUAI_MEN[monthWx]?.[wuxing] || '休'
 }
 
 // 十二长生顺序
@@ -111,28 +119,34 @@ export function getTwelveState(gan: string, zhi: string): string {
 
 /**
  * 获取九星在宫位的旺衰 + 月令旺衰
+ * 九星旺衰规则：与我同行=相，我生者=旺，生我者=休，克我者=囚，我克者=废
  */
 export function getXingStatus(xingName: string, gongNum: number, monthZhi: string): { gongWs: string; monthWs: string } {
   const xingWx = XING_WUXING[xingName] || '土'
   const gongWx = GONG_WUXING[gongNum] || '土'
+  const monthWx = ZHI_WX[monthZhi] || '土'
   
-  // 九星在宫位的旺衰（宫位五行作为"令"）
-  const gongWs = WANGSHUAI_TABLE[gongWx]?.[xingWx] || '休'
-  // 九星在月令的旺衰
-  const monthWs = getWangShuai(xingWx, monthZhi)
+  // 九星落宫旺衰（九星专用表，以宫位五行为"令"）
+  const gongWs = WANGSHUAI_XING[gongWx]?.[xingWx] || '休'
+  // 九星月令旺衰（九星专用表，以月令五行为"令"）
+  const monthWs = WANGSHUAI_XING[monthWx]?.[xingWx] || '休'
   
   return { gongWs, monthWs }
 }
 
 /**
  * 获取八门在宫位的旺衰 + 月令旺衰
+ * 八门旺衰规则（标准）：当令者旺，我生者相，生我者休，克我者囚，我克者死
  */
 export function getMenStatus(menName: string, gongNum: number, monthZhi: string): { gongWs: string; monthWs: string } {
   const menWx = MEN_WUXING[menName] || '土'
   const gongWx = GONG_WUXING[gongNum] || '土'
+  const monthWx = ZHI_WX[monthZhi] || '土'
   
-  const gongWs = WANGSHUAI_TABLE[gongWx]?.[menWx] || '休'
-  const monthWs = getWangShuai(menWx, monthZhi)
+  // 八门落宫旺衰（标准表，以宫位五行为"令"）
+  const gongWs = WANGSHUAI_MEN[gongWx]?.[menWx] || '休'
+  // 八门月令旺衰（标准表，以月令五行为"令"）
+  const monthWs = WANGSHUAI_MEN[monthWx]?.[menWx] || '休'
   
   return { gongWs, monthWs }
 }
