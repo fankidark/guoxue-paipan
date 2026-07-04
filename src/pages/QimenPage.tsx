@@ -8,6 +8,7 @@ import {
   GONG_GUA, JIEQI_MONTH_ZHI, XING_WUXING, MEN_WUXING,
   getXingStatus, getMenStatus, getGanTwelveInGong
 } from '../lib/qimen-status'
+import { getGanTwelveInGongDouble, hasXingInGong } from '../lib/qimen-twelve'
 
 // 洛书九宫排列：巽4|离9|坤2 / 震3|中5|兑7 / 艮8|坎1|乾6
 const LUOSHU_ORDER = [4, 9, 2, 3, 5, 7, 8, 1, 6]
@@ -225,8 +226,14 @@ function PalaceCell({ palace, monthZhi }: { palace: PalaceData; monthZhi: string
   
   const xingStatus = getXingStatus(palace.jiuXing, gongNum, monthZhi)
   const menStatus = getMenStatus(palace.baMen, gongNum, monthZhi)
-  const tianGanTwelve = getGanTwelveInGong(palace.tianPanGan, gongNum)
-  const diGanTwelve = getGanTwelveInGong(palace.diPanGan, gongNum)
+  
+  // 双地支十二长生
+  const tianTwelve = getGanTwelveInGongDouble(palace.tianPanGan, gongNum)
+  const diTwelve = getGanTwelveInGongDouble(palace.diPanGan, gongNum)
+  
+  // 地支三刑
+  const tianXing = hasXingInGong(palace.tianPanGan, gongNum)
+  const diXing = hasXingInGong(palace.diPanGan, gongNum)
 
   return (
     <div className="bg-dark-800/40 border border-dark-700/30 rounded-lg p-2.5 min-h-[160px] relative flex flex-col justify-between">
@@ -254,10 +261,12 @@ function PalaceCell({ palace, monthZhi }: { palace: PalaceData; monthZhi: string
           <span className={`text-sm font-bold ${ganColor(palace.tianPanGan)}`}>{palace.tianPanGan}</span>
         </div>
         
-        {/* 九星旺衰 + 十二长生 */}
+        {/* 九星旺衰 + 十二长生(含刑) */}
         <div className="flex items-center gap-1 text-[10px]">
           <span className="text-dark-500">{xingStatus.gongWs}月{xingStatus.monthWs}</span>
-          {tianGanTwelve && <span className="text-amber-500/70">{tianGanTwelve}</span>}
+          {(tianXing || tianTwelve) && (
+            <span className="text-amber-500/70">{tianXing ? '刑' : ''}{tianTwelve}</span>
+          )}
         </div>
 
         {/* 八门 + 地盘干 */}
@@ -266,10 +275,12 @@ function PalaceCell({ palace, monthZhi }: { palace: PalaceData; monthZhi: string
           <span className={`text-xs ${ganColor(palace.diPanGan)}`}>{palace.diPanGan}</span>
         </div>
         
-        {/* 八门旺衰 + 十二长生 */}
+        {/* 八门旺衰 + 十二长生(含刑) */}
         <div className="flex items-center gap-1 text-[10px]">
           <span className="text-dark-500">{menStatus.gongWs}月{menStatus.monthWs}</span>
-          {diGanTwelve && <span className="text-amber-500/70">{diGanTwelve}</span>}
+          {(diXing || diTwelve) && (
+            <span className="text-amber-500/70">{diXing ? '刑' : ''}{diTwelve}</span>
+          )}
         </div>
       </div>
     </div>
