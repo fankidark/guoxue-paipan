@@ -64,14 +64,14 @@ const WANGSHUAI_MEN: Record<string, Record<string, string>> = {
   '水': { '水': '旺', '木': '相', '金': '休', '土': '囚', '火': '死' },
 }
 
-// 九星旺衰表（特殊！）：与我同行=相，我生者=旺，生我者=休，克我者=囚，我克者=废
-// 注意九星用"废"而非"死"
+// 九星旺衰表：我生令=旺, 同行=相, 我克令=休, 令克我=囚, 令生我=废
+// key=令(宫/月)五行, value中key=九星五行→状态
 const WANGSHUAI_XING: Record<string, Record<string, string>> = {
-  '木': { '木': '相', '水': '旺', '火': '休', '金': '囚', '土': '废' },
-  '火': { '火': '相', '木': '旺', '土': '休', '水': '囚', '金': '废' },
-  '土': { '土': '相', '火': '旺', '金': '休', '木': '囚', '水': '废' },
-  '金': { '金': '相', '土': '旺', '水': '休', '火': '囚', '木': '废' },
-  '水': { '水': '相', '金': '旺', '木': '休', '土': '囚', '火': '废' },
+  '木': { '水': '旺', '木': '相', '土': '休', '金': '囚', '火': '废' },
+  '火': { '木': '旺', '火': '相', '水': '休', '金': '囚', '土': '废' },
+  '土': { '火': '旺', '土': '相', '木': '休', '水': '囚', '金': '废' },
+  '金': { '土': '旺', '金': '相', '火': '休', '木': '囚', '水': '废' },
+  '水': { '金': '旺', '水': '相', '土': '休', '火': '囚', '木': '废' },
 }
 
 /**
@@ -158,6 +158,17 @@ export function getGanTwelveInGong(gan: string, gongNum: number): string {
   const gongZhi = GONG_DIZHI[gongNum]
   if (!gongZhi || !gan) return ''
   return getTwelveState(gan, gongZhi)
+}
+
+/**
+ * 判断八门是否门迫（门克宫）
+ */
+export function isMenPo(menName: string, gongNum: number): boolean {
+  const menWx = MEN_WUXING[menName] || '土'
+  const gongWx = GONG_WUXING[gongNum] || '土'
+  // 门克宫 = 门迫
+  const KE: Record<string, string> = { '木': '土', '火': '金', '土': '水', '金': '木', '水': '火' }
+  return KE[menWx] === gongWx
 }
 
 export { GAN_WX, ZHI_WX }
