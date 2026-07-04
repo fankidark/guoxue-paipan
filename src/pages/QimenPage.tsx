@@ -325,18 +325,24 @@ export default function QimenPage() {
             <h3 className="text-sm text-dark-400 font-medium mb-3">年命纳音速查（近年）</h3>
             <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-1.5 text-xs">
               {[
-                ['2020庚子','壁上土'],['2021辛丑','壁上土'],
-                ['2022壬寅','金箔金'],['2023癸卯','金箔金'],
-                ['2024甲辰','覆灯火'],['2025乙巳','覆灯火'],
-                ['2026丙午','天河水'],['2027丁未','天河水'],
-                ['2028戊申','大驿土'],['2029己酉','大驿土'],
-                ['2030庚戌','钗钏金'],['2031辛亥','钗钏金'],
-              ].map(([year, nayin]) => (
+                ['2020庚子','壁上土','土','庚'],['2021辛丑','壁上土','土','辛'],
+                ['2022壬寅','金箔金','金','壬'],['2023癸卯','金箔金','金','癸'],
+                ['2024甲辰','覆灯火','火','甲'],['2025乙巳','覆灯火','火','乙'],
+                ['2026丙午','天河水','水','丙'],['2027丁未','天河水','水','丁'],
+                ['2028戊申','大驿土','土','戊'],['2029己酉','大驿土','土','己'],
+                ['2030庚戌','钗钏金','金','庚'],['2031辛亥','钗钏金','金','辛'],
+              ].map(([year, nayin, wx, gan]) => (
                 <div key={year} className="bg-dark-800/40 rounded px-2 py-1.5 flex justify-between items-center">
                   <span className="text-dark-300">{year}</span>
-                  <span className="text-amber-400">{nayin}</span>
+                  <span className="flex items-center gap-1">
+                    <span className={`${WX_TEXT_COLOR[wx]}`}>{nayin}</span>
+                    <span className={`text-[10px] ${ganColor(gan)}`}>{wx}</span>
+                  </span>
                 </div>
               ))}
+            </div>
+            <div className="mt-2 text-[10px] text-dark-600">
+              年命五行用于判断求测人与盘中各元素的生克关系。如2026年生人年命=水，遇火宫/火星则受克。
             </div>
           </div>
 
@@ -401,6 +407,82 @@ export default function QimenPage() {
               <div className="font-medium text-dark-400 mb-1">八神排列顺序</div>
               <div>值符 → 螣蛇 → 太阴 → 六合 → 白虎 → 玄武 → 九地 → 九天</div>
               <div className="mt-1 text-dark-600">（八神无固定本位宫，从值符目标宫起按阳遁顺时针/阴遁逆时针排列）</div>
+            </div>
+          </div>
+
+          {/* 九星八门八神吉凶速查 */}
+          <div className="card">
+            <h3 className="text-sm text-dark-400 font-medium mb-3">九星·八门·八神吉凶速查</h3>
+            <div className="space-y-4">
+              {/* 九星吉凶 */}
+              <div>
+                <div className="text-xs text-dark-300 font-medium mb-1.5">九星吉凶</div>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-1.5 text-xs">
+                  {[
+                    ['天心','金','大吉','主贵人、医药、技术、策划，利求谋'],
+                    ['天任','土','吉','主忠厚、稳重、土地、农业，利守成'],
+                    ['天辅','木','吉','主文昌、学业、仁慈、教育，利文事'],
+                    ['天冲','木','小吉','主果敢、冲动、武勇，利出行征战'],
+                    ['天禽','土','中平','主中正、沉稳，随天芮同宫判断'],
+                    ['天英','火','小凶','主血光、文书、是非口舌，宜南方事'],
+                    ['天芮','土','大凶','主疾病、小人、阴私暗害，百事不利'],
+                    ['天柱','金','凶','主毁折、口舌、惊恐，不利谋事'],
+                    ['天蓬','水','大凶','主盗贼、暗昧、奸淫，百事皆凶'],
+                  ].map(([name, wx, ji, desc]) => (
+                    <div key={name} className="bg-dark-800/40 rounded px-2 py-1.5 flex items-start gap-2">
+                      <span className={`font-medium whitespace-nowrap ${WX_TEXT_COLOR[wx]}`}>{name}</span>
+                      <span className={`whitespace-nowrap ${ji.includes('凶') ? 'text-red-400' : ji === '中平' ? 'text-dark-400' : 'text-green-400'}`}>{ji}</span>
+                      <span className="text-dark-500">{desc}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* 八门吉凶 */}
+              <div>
+                <div className="text-xs text-dark-300 font-medium mb-1.5">八门吉凶</div>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-1.5 text-xs">
+                  {[
+                    ['开门','金','大吉','主开创、官贵、升迁，万事可为'],
+                    ['休门','水','吉','主休养、贵人相助，利求财见贵'],
+                    ['生门','土','大吉','主生机、财利、营造，利求财开业'],
+                    ['伤门','木','凶','主伤灾、口角、竞争，利追讨索债'],
+                    ['杜门','木','中平','主阻塞、隐匿、闭藏，利防守躲避'],
+                    ['景门','火','中平','主文书、光明、消息，利文事考试'],
+                    ['死门','土','大凶','主死丧、凶险、绝境，百事不利'],
+                    ['惊门','金','凶','主惊恐、官非、口舌，宜坐镇安抚'],
+                  ].map(([name, wx, ji, desc]) => (
+                    <div key={name} className="bg-dark-800/40 rounded px-2 py-1.5 flex items-start gap-2">
+                      <span className={`font-medium whitespace-nowrap ${WX_TEXT_COLOR[wx]}`}>{name}</span>
+                      <span className={`whitespace-nowrap ${ji.includes('凶') ? 'text-red-400' : ji === '中平' ? 'text-dark-400' : 'text-green-400'}`}>{ji}</span>
+                      <span className="text-dark-500">{desc}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* 八神吉凶 */}
+              <div>
+                <div className="text-xs text-dark-300 font-medium mb-1.5">八神吉凶</div>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-1.5 text-xs">
+                  {[
+                    ['值符','土','大吉','主尊贵、领导、上级庇护，诸事皆吉'],
+                    ['螣蛇','火','凶','主虚惊、怪异、缠绕、梦寐不安'],
+                    ['太阴','金','吉','主阴谋、暗助、贵人暗中相帮'],
+                    ['六合','木','吉','主和合、婚姻、交易、中间人'],
+                    ['白虎','金','凶','主凶煞、伤病、丧事、刑罚血光'],
+                    ['玄武','水','凶','主盗贼、欺诈、暗昧、失物走失'],
+                    ['九地','土','吉','主柔顺、包容、藏匿、守旧安稳'],
+                    ['九天','火','吉','主刚健、远大、向上、宜远行高举'],
+                  ].map(([name, wx, ji, desc]) => (
+                    <div key={name} className="bg-dark-800/40 rounded px-2 py-1.5 flex items-start gap-2">
+                      <span className={`font-medium whitespace-nowrap ${WX_TEXT_COLOR[wx]}`}>{name}</span>
+                      <span className={`whitespace-nowrap ${ji.includes('凶') ? 'text-red-400' : 'text-green-400'}`}>{ji}</span>
+                      <span className="text-dark-500">{desc}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
             </div>
           </div>
         </>
