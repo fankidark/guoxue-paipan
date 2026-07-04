@@ -6,7 +6,7 @@ import { calculateQimen } from '../lib/qimen'
 import type { QimenResult } from '../lib/qimen'
 import {
   GONG_GUA, JIEQI_MONTH_ZHI, XING_WUXING, MEN_WUXING,
-  getXingStatus, getMenStatus, getGanTwelveInGong, isMenPo
+  getXingStatus, getMenStatus, getGanTwelveInGong
 } from '../lib/qimen-status'
 import { getGanTwelveInGongDouble, hasXingInGong } from '../lib/qimen-twelve'
 
@@ -272,7 +272,6 @@ function PalaceCell({ palace, monthZhi }: { palace: PalaceData; monthZhi: string
   
   const xingStatus = getXingStatus(palace.jiuXing, gongNum, monthZhi)
   const menStatus = getMenStatus(palace.baMen, gongNum, monthZhi)
-  const menPo = isMenPo(palace.baMen, gongNum) // 门迫判断
   
   // 双地支十二长生
   const tianTwelve = getGanTwelveInGongDouble(palace.tianPanGan, gongNum)
@@ -324,7 +323,7 @@ function PalaceCell({ palace, monthZhi }: { palace: PalaceData; monthZhi: string
         {/* 八门旺衰 + 门迫 + 十二长生(含刑) */}
         <div className="flex items-center gap-1 text-[10px]">
           <span className="text-dark-500">
-            {menPo ? <span className="text-pink-400">迫</span> : menStatus.gongWs}月{menStatus.monthWs}
+            {menStatus.gongWs === '迫' ? <span className="text-pink-400">迫</span> : menStatus.gongWs}月{menStatus.monthWs}
           </span>
           {(diXing || diTwelve) && (
             <span className="text-amber-500/70">{diXing ? <span className="text-pink-400">刑</span> : ''}{diTwelve}</span>
