@@ -1,159 +1,122 @@
 /**
- * 奇门遁甲排盘页面
+ * 奇门遁甲排盘页面 — 匹配参考 UI 设计
  */
 import { useState, useEffect } from 'react'
 import { calculateQimen } from '../lib/qimen'
-import type { QimenResult, QimenPalace } from '../lib/qimen'
+import type { QimenResult } from '../lib/qimen'
 
-// 洛书九宫排列顺序（从左上到右下，3行3列）
+// 洛书九宫排列顺序（从左上到右下）
 // 巽4 | 离9 | 坤2
 // 震3 | 中5 | 兑7
 // 艮8 | 坎1 | 乾6
 const LUOSHU_ORDER = [4, 9, 2, 3, 5, 7, 8, 1, 6]
 
-// 宫位标签
-const GONG_LABELS: Record<number, string> = {
-  1: '坎一', 2: '坤二', 3: '震三',
-  4: '巽四', 5: '中五', 6: '乾六',
-  7: '兑七', 8: '艮八', 9: '离九',
-}
-
 function formatDateTime(d: Date): string {
   return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}T${String(d.getHours()).padStart(2, '0')}:${String(d.getMinutes()).padStart(2, '0')}`
 }
 
-function PalaceCard({ palace }: { palace: QimenPalace }) {
-  const isCenter = palace.gongNumber === 5
-  return (
-    <div className={`card text-center text-xs space-y-0.5 min-h-[120px] flex flex-col justify-center ${isCenter ? 'opacity-70' : ''}`}>
-      <div className="text-purple-400 font-medium">{palace.baShen}</div>
-      <div className="text-yellow-400">{palace.jiuXing}</div>
-      <div className="text-green-400 text-sm font-bold">{palace.tianPanGan}</div>
-      <div className="text-blue-400">{palace.baMen}</div>
-      <div className="text-dark-400">{palace.diPanGan}</div>
-      <div className="text-dark-500 text-[10px] mt-1">{GONG_LABELS[palace.gongNumber]}</div>
-    </div>
-  )
-}
-
 export default function QimenPage() {
-  const now = new Date()
-  const [datetimeStr, setDatetimeStr] = useState(formatDateTime(now))
+  const [datetime, setDatetime] = useState(formatDateTime(new Date()))
   const [result, setResult] = useState<QimenResult | null>(null)
-  const [loading, setLoading] = useState(false)
 
-  const doPaipan = (dateOverride?: Date) => {
-    setLoading(true)
-    try {
-      const d = dateOverride || new Date(datetimeStr)
-      const r = calculateQimen(d)
-      setResult(r)
-    } catch (e) {
-      console.error('奇门排盘出错:', e)
-    } finally {
-      setLoading(false)
-    }
-  }
-
-  const useNow = () => {
-    const n = new Date()
-    setDatetimeStr(formatDateTime(n))
-    doPaipan(n)
+  const doPaipan = (dt?: Date) => {
+    const d = dt || new Date(datetime)
+    const r = calculateQimen(d)
+    setResult(r)
   }
 
   useEffect(() => {
-    doPaipan()
+    doPaipan(new Date())
   }, [])
 
-  // 按洛书顺序排列九宫
-  const orderedPalaces = result
-    ? LUOSHU_ORDER.map(num => result.palaces.find(p => p.gongNumber === num)!)
-    : []
+  const setNow = () => {
+    const now = new Date()
+    setDatetime(formatDateTime(now))
+    doPaipan(now)
+  }
 
   return (
-    <div className="space-y-6">
-      {/* 输入区 */}
+    <div className="space-y-5">
+      {/* 标题 + 输入区 */}
       <div className="card">
         <h2 className="text-lg font-bold text-dark-100 mb-4">奇门遁甲排盘</h2>
-        <div className="flex flex-wrap gap-3 items-end mb-4">
+        
+        <div className="flex flex-wrap items-end gap-3">
           <div>
-            <label className="block text-xs text-dark-400 mb-1">日期时间</label>
+            <label className="label block mb-1">日期时间</label>
             <input
               type="datetime-local"
-              value={datetimeStr}
-              onChange={e => setDatetimeStr(e.target.value)}
-              className="bg-dark-800 border border-dark-600 rounded-lg px-3 py-2 text-dark-100 text-sm focus:outline-none focus:border-indigo-500"
+              value={datetime}
+              onChange={(e) => setDatetime(e.target.value)}
+              className="input-field w-52"
             />
           </div>
-          <button
-            onClick={useNow}
-            className="px-3 py-2 text-sm bg-dark-700 hover:bg-dark-600 text-dark-200 rounded-lg border border-dark-600 transition-colors"
-          >
-            当前时间
-          </button>
-          <button
-            onClick={() => doPaipan()}
-            disabled={loading}
-            className="btn-primary"
-          >
-            {loading ? '排盘中…' : '排盘'}
-          </button>
+          <button onClick={setNow} className="btn-secondary text-sm">当前时间</button>
+          <button onClick={() => doPaipan()} className="btn-primary text-sm">排盘</button>
         </div>
-
-        {/* 基础信息栏 */}
-        {result && (
-          <div className="flex flex-wrap gap-3 pt-3 border-t border-dark-700/50">
-            <InfoBadge
-              label={result.isYangDun ? '阳遁' : '阴遁'}
-              value={`${result.juNumber}局`}
-              highlight
-            />
-            <InfoBadge label="三元" value={`${result.yuan}元`} />
-            <InfoBadge label="节气" value={result.jieQi} />
-            <InfoBadge label="值符" value={result.zhiFu} color="text-yellow-400" />
-            <InfoBadge label="值使" value={result.zhiShi} color="text-blue-400" />
-            <InfoBadge label="旬首" value={result.xunShou} color="text-purple-400" />
-          </div>
-        )}
       </div>
 
       {result && (
         <>
-          {/* 四柱信息 */}
+          {/* 信息栏 */}
           <div className="card">
-            <h3 className="text-sm font-semibold text-dark-200 mb-3">四柱</h3>
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-3 text-center">
-              {[
-                { label: '年柱', gz: result.yearGZ },
-                { label: '月柱', gz: result.monthGZ },
-                { label: '日柱', gz: result.dayGZ },
-                { label: '时柱', gz: result.hourGZ },
-              ].map(({ label, gz }) => (
-                <div key={label} className="bg-dark-800/50 rounded-lg p-2">
-                  <div className="text-xs text-dark-500 mb-1">{label}</div>
-                  <div className="text-xl font-bold text-dark-100">{gz}</div>
-                </div>
-              ))}
+            <div className="flex flex-wrap gap-x-6 gap-y-2 text-sm">
+              <InfoItem label="遁局" value={result.isYangDun ? '阳遁' : '阴遁'} />
+              <InfoItem label="局数" value={`${result.juNumber}局`} color="text-amber-400" />
+              <InfoItem label="三元" value={`${result.yuan}元`} />
+              <InfoItem label="节气" value={result.jieQi} />
+              <InfoItem label="值符" value={result.zhiFu} color="text-purple-400" />
+              <InfoItem label="值使" value={result.zhiShi} color="text-purple-400" />
+              <InfoItem label="旬首" value={result.xunShou} color="text-amber-500" />
             </div>
           </div>
 
-          {/* 九宫格 */}
+          {/* 四柱 */}
           <div className="card">
-            <h3 className="text-sm font-semibold text-dark-200 mb-4">九宫盘局</h3>
-
-            {/* 图例 */}
-            <div className="flex flex-wrap gap-3 mb-4 text-xs">
-              <span className="text-purple-400">■ 八神</span>
-              <span className="text-yellow-400">■ 九星</span>
-              <span className="text-green-400">■ 天盘干</span>
-              <span className="text-blue-400">■ 八门</span>
-              <span className="text-dark-400">■ 地盘干</span>
+            <h3 className="text-sm text-dark-400 font-medium mb-3">四柱</h3>
+            <div className="grid grid-cols-4 gap-3">
+              <PillarCard label="年柱" value={result.yearGZ} />
+              <PillarCard label="月柱" value={result.monthGZ} />
+              <PillarCard label="日柱" value={result.dayGZ} />
+              <PillarCard label="时柱" value={result.hourGZ} />
             </div>
+          </div>
 
-            <div className="grid grid-cols-3 gap-2">
-              {orderedPalaces.map((palace, idx) =>
-                palace ? <PalaceCard key={idx} palace={palace} /> : <div key={idx} />
-              )}
+          {/* 九宫盘局 */}
+          <div className="card">
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-sm text-dark-400 font-medium">九宫盘局</h3>
+              {/* 图例 */}
+              <div className="flex gap-4 text-xs">
+                <span className="flex items-center gap-1">
+                  <span className="w-2 h-2 rounded-sm bg-purple-400"></span>
+                  <span className="text-dark-400">八神</span>
+                </span>
+                <span className="flex items-center gap-1">
+                  <span className="w-2 h-2 rounded-sm bg-emerald-400"></span>
+                  <span className="text-dark-400">九星</span>
+                </span>
+                <span className="flex items-center gap-1">
+                  <span className="w-2 h-2 rounded-sm bg-cyan-400"></span>
+                  <span className="text-dark-400">天盘干</span>
+                </span>
+                <span className="flex items-center gap-1">
+                  <span className="w-2 h-2 rounded-sm bg-white"></span>
+                  <span className="text-dark-400">八门</span>
+                </span>
+                <span className="flex items-center gap-1">
+                  <span className="w-2 h-2 rounded-sm bg-dark-400"></span>
+                  <span className="text-dark-400">地盘干</span>
+                </span>
+              </div>
+            </div>
+            
+            <div className="grid grid-cols-3 gap-1.5">
+              {LUOSHU_ORDER.map((gongNum) => {
+                const palace = result.palaces.find(p => p.gongNumber === gongNum)
+                if (!palace) return <div key={gongNum} />
+                return <PalaceCell key={gongNum} palace={palace} />
+              })}
             </div>
           </div>
         </>
@@ -162,25 +125,55 @@ export default function QimenPage() {
   )
 }
 
-function InfoBadge({
-  label,
-  value,
-  highlight,
-  color,
-}: {
-  label: string
-  value: string
-  highlight?: boolean
-  color?: string
-}) {
+// 信息栏单项
+function InfoItem({ label, value, color = 'text-dark-100' }: { label: string; value: string; color?: string }) {
   return (
     <div className="flex items-center gap-1.5">
-      <span className="text-dark-500 text-xs">{label}</span>
-      <span
-        className={`text-sm font-semibold ${highlight ? 'text-indigo-400' : color || 'text-dark-200'}`}
-      >
-        {value}
-      </span>
+      <span className="text-dark-500">{label}</span>
+      <span className={`font-medium ${color}`}>{value}</span>
     </div>
   )
+}
+
+// 四柱卡片
+function PillarCard({ label, value }: { label: string; value: string }) {
+  return (
+    <div className="bg-dark-800/60 border border-dark-700/40 rounded-lg py-4 px-3 text-center">
+      <div className="text-xs text-dark-500 mb-2">{label}</div>
+      <div className="text-xl font-bold text-dark-100 tracking-wider">{value}</div>
+    </div>
+  )
+}
+
+// 九宫格单元格
+function PalaceCell({ palace }: { palace: { gongNumber: number; gongName: string; diPanGan: string; tianPanGan: string; jiuXing: string; baMen: string; baShen: string } }) {
+  const isCenterPalace = palace.gongNumber === 5
+  
+  return (
+    <div className="bg-dark-800/40 border border-dark-700/30 rounded-lg py-3 px-2 text-center min-h-[140px] flex flex-col items-center justify-center gap-0.5">
+      {isCenterPalace ? (
+        <>
+          <span className="text-purple-400 text-xs">{palace.baShen}</span>
+          <span className="text-emerald-400 text-xs">{palace.jiuXing}</span>
+          <span className="text-cyan-400 text-base font-bold my-1">{palace.tianPanGan}</span>
+          <span className="text-dark-100 text-xs">中</span>
+          <span className="text-dark-500 text-xs">{palace.diPanGan}</span>
+          <span className="text-dark-600 text-[10px] mt-1">宫五</span>
+        </>
+      ) : (
+        <>
+          <span className="text-purple-400 text-xs">{palace.baShen}</span>
+          <span className="text-emerald-400 text-xs">{palace.jiuXing}</span>
+          <span className="text-cyan-400 text-base font-bold my-1">{palace.tianPanGan}</span>
+          <span className="text-dark-100 text-xs">{palace.baMen}</span>
+          <span className="text-dark-500 text-xs">{palace.diPanGan}</span>
+          <span className="text-dark-600 text-[10px] mt-1">宫{numToChinese(palace.gongNumber)}</span>
+        </>
+      )}
+    </div>
+  )
+}
+
+function numToChinese(n: number): string {
+  return ['零', '一', '二', '三', '四', '五', '六', '七', '八', '九'][n] || String(n)
 }
