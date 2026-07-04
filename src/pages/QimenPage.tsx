@@ -1,11 +1,11 @@
 /**
- * 奇门遁甲排盘页面 — 完整版（匹配参考 App 信息量）
+ * 奇门遁甲排盘页面 — 九星/八门/八神使用五行颜色
  */
 import { useState, useEffect } from 'react'
 import { calculateQimen } from '../lib/qimen'
 import type { QimenResult } from '../lib/qimen'
 import {
-  GONG_GUA, JIEQI_MONTH_ZHI,
+  GONG_GUA, JIEQI_MONTH_ZHI, XING_WUXING, MEN_WUXING,
   getXingStatus, getMenStatus, getGanTwelveInGong
 } from '../lib/qimen-status'
 
@@ -16,18 +16,60 @@ function formatDateTime(d: Date): string {
   return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}T${String(d.getHours()).padStart(2, '0')}:${String(d.getMinutes()).padStart(2, '0')}`
 }
 
-// 天干五行颜色（金黄/木绿/水蓝/火红/土棕）
-const GAN_COLOR: Record<string, string> = {
-  '甲': 'text-green-400', '乙': 'text-green-400',     // 木·绿
-  '丙': 'text-red-400', '丁': 'text-red-400',         // 火·红
-  '戊': 'text-amber-600', '己': 'text-amber-600',     // 土·棕
-  '庚': 'text-yellow-400', '辛': 'text-yellow-400',   // 金·黄
-  '壬': 'text-blue-400', '癸': 'text-blue-400',       // 水·蓝
+// 五行颜色（金黄/木绿/水蓝/火红/土棕）
+const WX_TEXT_COLOR: Record<string, string> = {
+  '金': 'text-yellow-400',
+  '木': 'text-green-400',
+  '水': 'text-blue-400',
+  '火': 'text-red-400',
+  '土': 'text-amber-600',
 }
-const ZHI_COLOR: Record<string, string> = {
-  '子': 'text-blue-400', '丑': 'text-amber-600', '寅': 'text-green-400', '卯': 'text-green-400',
-  '辰': 'text-amber-600', '巳': 'text-red-400', '午': 'text-red-400', '未': 'text-amber-600',
-  '申': 'text-yellow-400', '酉': 'text-yellow-400', '戌': 'text-amber-600', '亥': 'text-blue-400',
+
+// 天干五行
+const GAN_WUXING: Record<string, string> = {
+  '甲': '木', '乙': '木', '丙': '火', '丁': '火', '戊': '土',
+  '己': '土', '庚': '金', '辛': '金', '壬': '水', '癸': '水',
+}
+
+// 天干五行颜色
+function ganColor(gan: string): string {
+  return WX_TEXT_COLOR[GAN_WUXING[gan] || '土'] || 'text-dark-100'
+}
+
+// 地支五行
+const ZHI_WUXING: Record<string, string> = {
+  '子': '水', '丑': '土', '寅': '木', '卯': '木', '辰': '土', '巳': '火',
+  '午': '火', '未': '土', '申': '金', '酉': '金', '戌': '土', '亥': '水',
+}
+function zhiColor(zhi: string): string {
+  return WX_TEXT_COLOR[ZHI_WUXING[zhi] || '土'] || 'text-dark-100'
+}
+
+// 八神五行
+const SHEN_WUXING: Record<string, string> = {
+  '值符': '土', '腾蛇': '火', '太阴': '金', '六合': '木',
+  '白虎': '金', '玄武': '水', '九地': '土', '九天': '火',
+}
+function shenColor(shen: string): string {
+  return WX_TEXT_COLOR[SHEN_WUXING[shen] || '土'] || 'text-dark-100'
+}
+
+// 九星五行颜色
+function xingColor(xing: string): string {
+  return WX_TEXT_COLOR[XING_WUXING[xing] || '土'] || 'text-dark-100'
+}
+
+// 八门五行颜色
+function menColor(men: string): string {
+  return WX_TEXT_COLOR[MEN_WUXING[men] || '土'] || 'text-dark-100'
+}
+
+// 宫位五行颜色
+const GONG_WUXING: Record<number, string> = {
+  1: '水', 2: '土', 3: '木', 4: '木', 5: '土', 6: '金', 7: '金', 8: '土', 9: '火'
+}
+function gongColor(gong: number): string {
+  return WX_TEXT_COLOR[GONG_WUXING[gong] || '土'] || 'text-dark-100'
 }
 
 export default function QimenPage() {
@@ -47,7 +89,6 @@ export default function QimenPage() {
     doPaipan(now)
   }
 
-  // 获取当前月令地支
   const monthZhi = result ? (JIEQI_MONTH_ZHI[result.jieQi] || '午') : '午'
 
   return (
@@ -74,8 +115,8 @@ export default function QimenPage() {
               <InfoItem label="局数" value={`${result.juNumber}局`} color="text-amber-400" />
               <InfoItem label="三元" value={`${result.yuan}元`} />
               <InfoItem label="节气" value={result.jieQi} />
-              <InfoItem label="值符" value={result.zhiFu} color="text-purple-400" />
-              <InfoItem label="值使" value={result.zhiShi} color="text-purple-400" />
+              <InfoItem label="值符" value={result.zhiFu} color={xingColor(result.zhiFu)} />
+              <InfoItem label="值使" value={result.zhiShi} color={menColor(result.zhiShi)} />
               <InfoItem label="旬首" value={result.xunShou} color="text-amber-500" />
             </div>
           </div>
@@ -96,11 +137,11 @@ export default function QimenPage() {
             <div className="flex items-center justify-between mb-4">
               <h3 className="text-sm text-dark-400 font-medium">九宫盘局</h3>
               <div className="flex gap-3 text-[11px]">
-                <Legend color="bg-purple-400" label="八神" />
-                <Legend color="bg-amber-400" label="九星" />
-                <Legend color="bg-cyan-400" label="天盘干" />
-                <Legend color="bg-dark-100" label="八门" />
-                <Legend color="bg-dark-500" label="地盘干" />
+                <span className="text-dark-400">八神</span>
+                <span className="text-dark-400">九星</span>
+                <span className="text-dark-400">天盘干</span>
+                <span className="text-dark-400">八门</span>
+                <span className="text-dark-400">地盘干</span>
               </div>
             </div>
             
@@ -129,15 +170,6 @@ function InfoItem({ label, value, color = 'text-dark-100' }: { label: string; va
   )
 }
 
-function Legend({ color, label }: { color: string; label: string }) {
-  return (
-    <span className="flex items-center gap-1">
-      <span className={`w-2 h-2 rounded-sm ${color}`}></span>
-      <span className="text-dark-400">{label}</span>
-    </span>
-  )
-}
-
 function PillarCard({ label, value }: { label: string; value: string }) {
   const gan = value[0] || ''
   const zhi = value[1] || ''
@@ -145,14 +177,14 @@ function PillarCard({ label, value }: { label: string; value: string }) {
     <div className="bg-dark-800/60 border border-dark-700/40 rounded-lg py-4 px-3 text-center">
       <div className="text-xs text-dark-500 mb-2">{label}</div>
       <div className="flex flex-col items-center gap-1">
-        <span className={`text-xl font-bold ${GAN_COLOR[gan] || 'text-dark-100'}`}>{gan}</span>
-        <span className={`text-xl font-bold ${ZHI_COLOR[zhi] || 'text-dark-100'}`}>{zhi}</span>
+        <span className={`text-xl font-bold ${ganColor(gan)}`}>{gan}</span>
+        <span className={`text-xl font-bold ${zhiColor(zhi)}`}>{zhi}</span>
       </div>
     </div>
   )
 }
 
-// === 九宫格核心 Cell ===
+// === 九宫格 Cell（五行颜色版）===
 interface PalaceData {
   gongNumber: number
   gongName: string
@@ -163,68 +195,51 @@ interface PalaceData {
   baShen: string
 }
 
-// 宫位五行颜色（金黄/木绿/水蓝/火红/土棕）
-const GONG_COLOR: Record<number, string> = {
-  1: 'text-blue-400',    // 坎·水·蓝
-  2: 'text-amber-600',   // 坤·土·棕
-  3: 'text-green-400',   // 震·木·绿
-  4: 'text-green-400',   // 巽·木·绿
-  5: 'text-amber-600',   // 中·土·棕
-  6: 'text-yellow-400',  // 乾·金·黄
-  7: 'text-yellow-400',  // 兑·金·黄
-  8: 'text-amber-600',   // 艮·土·棕
-  9: 'text-red-400',     // 离·火·红
-}
-
 function PalaceCell({ palace, monthZhi }: { palace: PalaceData; monthZhi: string }) {
   const gongNum = palace.gongNumber
   const guaName = GONG_GUA[gongNum] || ''
-  const gongColor = GONG_COLOR[gongNum] || 'text-dark-400'
+  const gColor = gongColor(gongNum)
   
-  // 九星旺衰
   const xingStatus = getXingStatus(palace.jiuXing, gongNum, monthZhi)
-  // 八门旺衰
   const menStatus = getMenStatus(palace.baMen, gongNum, monthZhi)
-  // 天盘干十二长生
   const tianGanTwelve = getGanTwelveInGong(palace.tianPanGan, gongNum)
-  // 地盘干十二长生
   const diGanTwelve = getGanTwelveInGong(palace.diPanGan, gongNum)
 
   return (
     <div className="bg-dark-800/40 border border-dark-700/30 rounded-lg p-2.5 min-h-[160px] relative flex flex-col justify-between">
-      {/* 左上角：卦名（五行色） */}
-      <span className={`absolute top-1.5 left-2 text-[11px] font-bold ${gongColor}`}>{guaName}</span>
+      {/* 左上角：卦名（宫位五行色） */}
+      <span className={`absolute top-1.5 left-2 text-[11px] font-bold ${gColor}`}>{guaName}</span>
       
-      {/* 左下角：宫位数字（五行色） */}
-      <span className={`absolute bottom-1.5 left-2 text-sm font-bold ${gongColor}`}>{gongNum}</span>
+      {/* 左下角：宫位数字（宫位五行色） */}
+      <span className={`absolute bottom-1.5 left-2 text-sm font-bold ${gColor}`}>{gongNum}</span>
 
       {/* 主内容区 */}
       <div className="flex flex-col items-center gap-[3px] pt-4 pb-3">
-        {/* 八神 */}
-        <span className="text-purple-400 text-xs font-medium">{palace.baShen}</span>
+        {/* 八神（八神五行色） */}
+        <span className={`text-xs font-medium ${shenColor(palace.baShen)}`}>{palace.baShen}</span>
         
-        {/* 九星 + 天盘干 */}
+        {/* 九星（九星五行色）+ 天盘干（天干五行色） */}
         <div className="flex items-center gap-1.5">
-          <span className="text-amber-400 text-xs">{palace.jiuXing}</span>
-          <span className={`text-cyan-400 text-sm font-bold`}>{palace.tianPanGan}</span>
+          <span className={`text-xs ${xingColor(palace.jiuXing)}`}>{palace.jiuXing}</span>
+          <span className={`text-sm font-bold ${ganColor(palace.tianPanGan)}`}>{palace.tianPanGan}</span>
         </div>
         
         {/* 九星旺衰 + 十二长生 */}
         <div className="flex items-center gap-1 text-[10px]">
           <span className="text-dark-500">{xingStatus.gongWs}月{xingStatus.monthWs}</span>
-          {tianGanTwelve && <span className="text-orange-400/80">{tianGanTwelve}</span>}
+          {tianGanTwelve && <span className="text-dark-400">{tianGanTwelve}</span>}
         </div>
 
-        {/* 八门 + 地盘干 */}
+        {/* 八门（八门五行色）+ 地盘干（天干五行色） */}
         <div className="flex items-center gap-1.5 mt-1">
-          <span className="text-dark-100 text-xs font-medium">{palace.baMen}</span>
-          <span className="text-dark-400 text-xs">{palace.diPanGan}</span>
+          <span className={`text-xs font-medium ${menColor(palace.baMen)}`}>{palace.baMen}</span>
+          <span className={`text-xs ${ganColor(palace.diPanGan)}`}>{palace.diPanGan}</span>
         </div>
         
         {/* 八门旺衰 + 十二长生 */}
         <div className="flex items-center gap-1 text-[10px]">
           <span className="text-dark-500">{menStatus.gongWs}月{menStatus.monthWs}</span>
-          {diGanTwelve && <span className="text-orange-400/80">{diGanTwelve}</span>}
+          {diGanTwelve && <span className="text-dark-400">{diGanTwelve}</span>}
         </div>
       </div>
     </div>
