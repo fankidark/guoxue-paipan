@@ -268,6 +268,95 @@ export default function QimenPage() {
               </div>
             </div>
           </div>
+
+          {/* 五行速查 */}
+          <div className="card">
+            <h3 className="text-sm text-dark-400 font-medium mb-3">五行相生相克速查</h3>
+            <div className="space-y-3">
+              <div>
+                <div className="text-xs text-dark-300 font-medium mb-1.5">五行相生（生我者为母，我生者为子）</div>
+                <div className="text-xs text-dark-400 leading-relaxed">
+                  <span className="text-green-400">木</span> → <span className="text-red-400">火</span> → <span className="text-amber-600">土</span> → <span className="text-yellow-400">金</span> → <span className="text-blue-400">水</span> → <span className="text-green-400">木</span>
+                </div>
+              </div>
+              <div>
+                <div className="text-xs text-dark-300 font-medium mb-1.5">五行相克（克我者为官，我克者为财）</div>
+                <div className="text-xs text-dark-400 leading-relaxed">
+                  <span className="text-green-400">木</span> → <span className="text-amber-600">土</span> → <span className="text-blue-400">水</span> → <span className="text-red-400">火</span> → <span className="text-yellow-400">金</span> → <span className="text-green-400">木</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* 时辰五行速查 */}
+          <div className="card">
+            <h3 className="text-sm text-dark-400 font-medium mb-3">时辰五行速查</h3>
+            <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 gap-1.5 text-xs">
+              {[
+                ['子时','23-01','水'],['丑时','01-03','土'],['寅时','03-05','木'],
+                ['卯时','05-07','木'],['辰时','07-09','土'],['巳时','09-11','火'],
+                ['午时','11-13','火'],['未时','13-15','土'],['申时','15-17','金'],
+                ['酉时','17-19','金'],['戌时','19-21','土'],['亥时','21-23','水'],
+              ].map(([name, time, wx]) => (
+                <div key={name} className="bg-dark-800/40 rounded px-2 py-1.5 text-center">
+                  <div className={`font-medium ${WX_TEXT_COLOR[wx]}`}>{name}</div>
+                  <div className="text-dark-500 text-[10px]">{time}</div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* 年命纳音速查 */}
+          <div className="card">
+            <h3 className="text-sm text-dark-400 font-medium mb-3">年命纳音速查（近年）</h3>
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-1.5 text-xs">
+              {[
+                ['2020庚子','壁上土'],['2021辛丑','壁上土'],
+                ['2022壬寅','金箔金'],['2023癸卯','金箔金'],
+                ['2024甲辰','覆灯火'],['2025乙巳','覆灯火'],
+                ['2026丙午','天河水'],['2027丁未','天河水'],
+                ['2028戊申','大驿土'],['2029己酉','大驿土'],
+                ['2030庚戌','钗钏金'],['2031辛亥','钗钏金'],
+              ].map(([year, nayin]) => (
+                <div key={year} className="bg-dark-800/40 rounded px-2 py-1.5 flex justify-between items-center">
+                  <span className="text-dark-300">{year}</span>
+                  <span className="text-amber-400">{nayin}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* 天干地支五行速查 */}
+          <div className="card">
+            <h3 className="text-sm text-dark-400 font-medium mb-3">天干地支五行速查</h3>
+            <div className="space-y-3">
+              <div>
+                <div className="text-xs text-dark-300 font-medium mb-1.5">十天干</div>
+                <div className="flex flex-wrap gap-2 text-xs">
+                  {[['甲','木','阳'],['乙','木','阴'],['丙','火','阳'],['丁','火','阴'],['戊','土','阳'],
+                    ['己','土','阴'],['庚','金','阳'],['辛','金','阴'],['壬','水','阳'],['癸','水','阴']
+                  ].map(([gan, wx, yy]) => (
+                    <span key={gan} className={`${WX_TEXT_COLOR[wx]} bg-dark-800/40 rounded px-1.5 py-0.5`}>
+                      {gan}{wx}{yy}
+                    </span>
+                  ))}
+                </div>
+              </div>
+              <div>
+                <div className="text-xs text-dark-300 font-medium mb-1.5">十二地支</div>
+                <div className="flex flex-wrap gap-2 text-xs">
+                  {[['子','水','鼠'],['丑','土','牛'],['寅','木','虎'],['卯','木','兔'],
+                    ['辰','土','龙'],['巳','火','蛇'],['午','火','马'],['未','土','羊'],
+                    ['申','金','猴'],['酉','金','鸡'],['戌','土','狗'],['亥','水','猪']
+                  ].map(([zhi, wx, sx]) => (
+                    <span key={zhi} className={`${WX_TEXT_COLOR[wx]} bg-dark-800/40 rounded px-1.5 py-0.5`}>
+                      {zhi}{wx}{sx}
+                    </span>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </div>
         </>
       )}
     </div>
