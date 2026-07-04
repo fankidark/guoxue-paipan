@@ -240,11 +240,10 @@ function PalaceCell({ palace, monthZhi }: { palace: PalaceData; monthZhi: string
       {/* 左上角：卦名 */}
       <span className={`absolute top-1.5 left-2 text-[11px] font-bold ${gColor}`}>{guaName}</span>
       
-      {/* 右上角：驿马🐎 空亡○ 击刑 */}
+      {/* 右上角：驿马🐎 空亡○ */}
       <div className="absolute top-1.5 right-2 flex items-center gap-0.5">
         {palace.yiMa && <span className="text-[11px]">🐎</span>}
         {palace.kongWang && <span className="text-[11px] text-dark-400">○</span>}
-        {palace.jiXing && <span className="text-[10px] text-red-400 font-bold">刑</span>}
       </div>
       
       {/* 左下角：宫位数字 */}
