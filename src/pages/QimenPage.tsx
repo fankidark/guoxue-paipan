@@ -175,6 +175,42 @@ export default function QimenPage() {
               ))}
             </div>
           </div>
+
+          {/* 旺衰参考 */}
+          <div className="card">
+            <h3 className="text-sm text-dark-400 font-medium mb-3">旺衰参考</h3>
+            <div className="space-y-3">
+              <div>
+                <div className="text-xs text-dark-300 font-medium mb-1.5">九星旺衰（以落宫/月令五行为令）</div>
+                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-2">
+                  <WsItem label="旺" desc="我生令（泄气为旺）" />
+                  <WsItem label="相" desc="与令同行" />
+                  <WsItem label="休" desc="我克令（耗力）" />
+                  <WsItem label="囚" desc="令克我（受制）" />
+                  <WsItem label="废" desc="令生我（被养无力）" />
+                </div>
+              </div>
+              <div>
+                <div className="text-xs text-dark-300 font-medium mb-1.5">八门旺衰（以落宫/月令五行为令）</div>
+                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-2">
+                  <WsItem label="旺" desc="与令同行（当令）" />
+                  <WsItem label="相" desc="我生令" />
+                  <WsItem label="休" desc="令生我（受生休息）" />
+                  <WsItem label="囚" desc="我克令（克令受囚）" />
+                  <WsItem label="死" desc="令克我（被克无力）" />
+                </div>
+              </div>
+              <div>
+                <div className="text-xs text-dark-300 font-medium mb-1.5">特殊标记</div>
+                <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
+                  <WsItem label="迫" desc="门克宫（门迫，能量耗损）" color="text-pink-400" />
+                  <WsItem label="刑" desc="地支三刑（六仪击刑）" color="text-pink-400" />
+                  <WsItem label="○" desc="空亡（旬中缺失地支）" />
+                  <WsItem label="🐎" desc="驿马（主动、变动）" />
+                </div>
+              </div>
+            </div>
+          </div>
         </>
       )}
     </div>
@@ -188,6 +224,15 @@ function InfoItem({ label, value, color = 'text-dark-100' }: { label: string; va
     <div className="flex items-center gap-1.5">
       <span className="text-dark-500">{label}</span>
       <span className={`font-medium ${color}`}>{value}</span>
+    </div>
+  )
+}
+
+function WsItem({ label, desc, color = 'text-amber-400' }: { label: string; desc: string; color?: string }) {
+  return (
+    <div className="flex items-start gap-1.5 text-xs">
+      <span className={`font-medium whitespace-nowrap ${color}`}>{label}</span>
+      <span className="text-dark-500">{desc}</span>
     </div>
   )
 }
