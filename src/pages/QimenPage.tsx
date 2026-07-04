@@ -186,7 +186,7 @@ export default function QimenPage() {
               <InfoItem label="节气" value={result.jieQi} />
               <InfoItem label="值符" value={result.zhiFu} color={xingColor(result.zhiFu)} />
               <InfoItem label="值使" value={result.zhiShi} color={menColor(result.zhiShi)} />
-              <InfoItem label="旬首" value={result.xunShou} color="text-amber-500" />
+              <InfoItem label="旬首" value={`${result.xunShou}(${({'甲子':'戊','甲戌':'己','甲申':'庚','甲午':'辛','甲辰':'壬','甲寅':'癸'} as Record<string,string>)[result.xunShou] || ''})`} color="text-amber-500" />
               <InfoItem label="局式" value="拆补法-转盘奇门" />
               {result.fuYin && <span className="text-xs text-pink-400 font-medium">伏吟</span>}
               {result.fanYin && <span className="text-xs text-pink-400 font-medium">反吟</span>}
