@@ -46,7 +46,7 @@ function zhiColor(zhi: string): string {
 
 // 八神五行
 const SHEN_WUXING: Record<string, string> = {
-  '值符': '土', '腾蛇': '火', '太阴': '金', '六合': '木',
+  '值符': '土', '螣蛇': '火', '太阴': '金', '六合': '木',
   '白虎': '金', '玄武': '水', '九地': '土', '九天': '火',
 }
 function shenColor(shen: string): string {

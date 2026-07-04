@@ -42,7 +42,7 @@ const MEN_NATIVE_GONG: Record<string, number> = {
 }
 
 // 八神顺序
-const BA_SHEN = ['值符', '腾蛇', '太阴', '六合', '白虎', '玄武', '九地', '九天']
+const BA_SHEN = ['值符', '螣蛇', '太阴', '六合', '白虎', '玄武', '九地', '九天']
 
 // 宫位对应卦名
 const GONG_GUA: Record<number, string> = {
