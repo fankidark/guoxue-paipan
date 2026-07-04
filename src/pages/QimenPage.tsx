@@ -163,9 +163,23 @@ interface PalaceData {
   baShen: string
 }
 
+// 宫位五行颜色（卦名和数字共用）
+const GONG_COLOR: Record<number, string> = {
+  1: 'text-blue-400',    // 坎·水
+  2: 'text-yellow-400',  // 坤·土
+  3: 'text-green-400',   // 震·木
+  4: 'text-green-400',   // 巽·木
+  5: 'text-yellow-400',  // 中·土
+  6: 'text-gray-300',    // 乾·金
+  7: 'text-gray-300',    // 兑·金
+  8: 'text-yellow-400',  // 艮·土
+  9: 'text-red-400',     // 离·火
+}
+
 function PalaceCell({ palace, monthZhi }: { palace: PalaceData; monthZhi: string }) {
   const gongNum = palace.gongNumber
   const guaName = GONG_GUA[gongNum] || ''
+  const gongColor = GONG_COLOR[gongNum] || 'text-dark-400'
   
   // 九星旺衰
   const xingStatus = getXingStatus(palace.jiuXing, gongNum, monthZhi)
@@ -178,11 +192,11 @@ function PalaceCell({ palace, monthZhi }: { palace: PalaceData; monthZhi: string
 
   return (
     <div className="bg-dark-800/40 border border-dark-700/30 rounded-lg p-2.5 min-h-[160px] relative flex flex-col justify-between">
-      {/* 左上角：卦名 */}
-      <span className="absolute top-1.5 left-2 text-[11px] text-dark-500 font-medium">{guaName}</span>
+      {/* 左上角：卦名（五行色） */}
+      <span className={`absolute top-1.5 left-2 text-[11px] font-bold ${gongColor}`}>{guaName}</span>
       
-      {/* 左下角：宫位数字 */}
-      <span className="absolute bottom-1.5 left-2 text-sm font-bold text-dark-500">{gongNum}</span>
+      {/* 左下角：宫位数字（五行色） */}
+      <span className={`absolute bottom-1.5 left-2 text-sm font-bold ${gongColor}`}>{gongNum}</span>
 
       {/* 主内容区 */}
       <div className="flex flex-col items-center gap-[3px] pt-4 pb-3">
