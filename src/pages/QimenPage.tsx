@@ -90,10 +90,30 @@ const TWELVE_STATE_DESC: Record<string, string> = {
 export default function QimenPage() {
   const [datetime, setDatetime] = useState(formatDateTime(new Date()))
   const [result, setResult] = useState<QimenResult | null>(null)
+  const [history, setHistory] = useState<{ dt: string; label: string }[]>([])
+
+  // 加载历史记录
+  useEffect(() => {
+    try {
+      const saved = localStorage.getItem('qimen_history')
+      if (saved) setHistory(JSON.parse(saved))
+    } catch {}
+  }, [])
+
+  // 保存历史记录
+  const saveToHistory = (dt: string, res: QimenResult) => {
+    const label = `${res.datetime} ${res.isYangDun ? '阳' : '阴'}遁${res.juNumber}局 ${res.fuYin ? '伏吟' : res.fanYin ? '反吟' : ''}`
+    const newItem = { dt, label: label.trim() }
+    const updated = [newItem, ...history.filter(h => h.dt !== dt)].slice(0, 20) // 最多保留20条
+    setHistory(updated)
+    try { localStorage.setItem('qimen_history', JSON.stringify(updated)) } catch {}
+  }
 
   const doPaipan = (dt?: Date) => {
     const d = dt || new Date(datetime)
-    setResult(calculateQimen(d))
+    const r = calculateQimen(d)
+    setResult(r)
+    saveToHistory(formatDateTime(d), r)
   }
 
   useEffect(() => { doPaipan(new Date()) }, [])
@@ -102,6 +122,16 @@ export default function QimenPage() {
     const now = new Date()
     setDatetime(formatDateTime(now))
     doPaipan(now)
+  }
+
+  const loadHistory = (dt: string) => {
+    setDatetime(dt)
+    doPaipan(new Date(dt))
+  }
+
+  const clearHistory = () => {
+    setHistory([])
+    try { localStorage.removeItem('qimen_history') } catch {}
   }
 
   const monthZhi = result ? (JIEQI_MONTH_ZHI[result.jieQi] || '午') : '午'
@@ -119,6 +149,31 @@ export default function QimenPage() {
           <button onClick={setNow} className="btn-secondary text-sm">当前时间</button>
           <button onClick={() => doPaipan()} className="btn-primary text-sm">排盘</button>
         </div>
+
+        {/* 历史记录 */}
+        {history.length > 0 && (
+          <div className="mt-4 pt-3 border-t border-dark-700/40">
+            <div className="flex items-center justify-between mb-2">
+              <span className="text-xs text-dark-500">历史记录</span>
+              <button onClick={clearHistory} className="text-[10px] text-dark-600 hover:text-red-400">清除</button>
+            </div>
+            <div className="flex flex-wrap gap-1.5">
+              {history.map((h, i) => (
+                <button
+                  key={i}
+                  onClick={() => loadHistory(h.dt)}
+                  className={`text-[11px] px-2 py-1 rounded border transition-colors ${
+                    h.dt === datetime
+                      ? 'border-purple-500/60 bg-purple-500/10 text-purple-300'
+                      : 'border-dark-700/40 bg-dark-800/40 text-dark-400 hover:text-dark-200 hover:border-dark-500'
+                  }`}
+                >
+                  {h.label}
+                </button>
+              ))}
+            </div>
+          </div>
+        )}
       </div>
 
       {result && (
