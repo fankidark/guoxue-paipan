@@ -88,6 +88,8 @@ export interface QimenPalace {
   jiuXing: string     // 九星
   baMen: string       // 八门
   baShen: string      // 八神
+  kongWang: boolean   // 是否空亡
+  yiMa: boolean       // 是否有驿马
 }
 
 export interface QimenResult {
@@ -358,6 +360,28 @@ export function calculateQimen(date?: Date): QimenResult {
   }
   shenInGong[5] = shenInGong[2] || '白虎' // 中宫寄坤
 
+  // === 第七步：排空亡和驿马 ===
+  // 空亡：旬内缺少的两个地支对应的宫位
+  const xunStartZhiIdx = DI_ZHI.indexOf(xunShou[1])
+  const kongZhi1 = DI_ZHI[(xunStartZhiIdx + 10) % 12]
+  const kongZhi2 = DI_ZHI[(xunStartZhiIdx + 11) % 12]
+  const ZHI_TO_GONG: Record<string, number> = {
+    '子': 1, '丑': 8, '寅': 8, '卯': 3, '辰': 4, '巳': 4,
+    '午': 9, '未': 2, '申': 2, '酉': 7, '戌': 6, '亥': 6
+  }
+  const kongGongs = new Set([ZHI_TO_GONG[kongZhi1], ZHI_TO_GONG[kongZhi2]])
+
+  // 驿马：根据时支查找
+  const hourZhi = hourGZ[1]
+  const YI_MA_TABLE: Record<string, string> = {
+    '申': '寅', '子': '寅', '辰': '寅',
+    '寅': '申', '午': '申', '戌': '申',
+    '巳': '亥', '酉': '亥', '丑': '亥',
+    '亥': '巳', '卯': '巳', '未': '巳'
+  }
+  const maZhi = YI_MA_TABLE[hourZhi] || ''
+  const maGong = maZhi ? ZHI_TO_GONG[maZhi] : -1
+
   // === 构建结果 ===
   const palaces: QimenPalace[] = []
   for (let g = 1; g <= 9; g++) {
@@ -369,6 +393,8 @@ export function calculateQimen(date?: Date): QimenResult {
       jiuXing: xingInGong[g] || '天禽',
       baMen: menInGong[g] || '中',
       baShen: shenInGong[g] || '值符',
+      kongWang: kongGongs.has(g),
+      yiMa: g === maGong,
     })
   }
 

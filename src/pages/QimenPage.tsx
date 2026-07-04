@@ -213,6 +213,8 @@ interface PalaceData {
   jiuXing: string
   baMen: string
   baShen: string
+  kongWang: boolean
+  yiMa: boolean
 }
 
 function PalaceCell({ palace, monthZhi }: { palace: PalaceData; monthZhi: string }) {
@@ -229,6 +231,12 @@ function PalaceCell({ palace, monthZhi }: { palace: PalaceData; monthZhi: string
     <div className="bg-dark-800/40 border border-dark-700/30 rounded-lg p-2.5 min-h-[160px] relative flex flex-col justify-between">
       {/* 左上角：卦名 */}
       <span className={`absolute top-1.5 left-2 text-[11px] font-bold ${gColor}`}>{guaName}</span>
+      
+      {/* 右上角：空亡○ 驿马🐎 */}
+      <div className="absolute top-1.5 right-2 flex items-center gap-0.5">
+        {palace.yiMa && <span className="text-[11px]">🐎</span>}
+        {palace.kongWang && <span className="text-[11px] text-dark-400">○</span>}
+      </div>
       
       {/* 左下角：宫位数字 */}
       <span className={`absolute bottom-1.5 left-2 text-sm font-bold ${gColor}`}>{gongNum}</span>
