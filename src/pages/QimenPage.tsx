@@ -1,5 +1,5 @@
 /**
- * 奇门遁甲排盘页面 — 九星/八门/八神使用五行颜色
+ * 奇门遁甲排盘页面 — 完整版（五行颜色 + 十二长生备注）
  */
 import { useState, useEffect } from 'react'
 import { calculateQimen } from '../lib/qimen'
@@ -30,8 +30,6 @@ const GAN_WUXING: Record<string, string> = {
   '甲': '木', '乙': '木', '丙': '火', '丁': '火', '戊': '土',
   '己': '土', '庚': '金', '辛': '金', '壬': '水', '癸': '水',
 }
-
-// 天干五行颜色
 function ganColor(gan: string): string {
   return WX_TEXT_COLOR[GAN_WUXING[gan] || '土'] || 'text-dark-100'
 }
@@ -64,12 +62,28 @@ function menColor(men: string): string {
   return WX_TEXT_COLOR[MEN_WUXING[men] || '土'] || 'text-dark-100'
 }
 
-// 宫位五行颜色
-const GONG_WUXING: Record<number, string> = {
+// 宫位五行
+const GONG_WX: Record<number, string> = {
   1: '水', 2: '土', 3: '木', 4: '木', 5: '土', 6: '金', 7: '金', 8: '土', 9: '火'
 }
 function gongColor(gong: number): string {
-  return WX_TEXT_COLOR[GONG_WUXING[gong] || '土'] || 'text-dark-100'
+  return WX_TEXT_COLOR[GONG_WX[gong] || '土'] || 'text-dark-100'
+}
+
+// 十二长生说明
+const TWELVE_STATE_DESC: Record<string, string> = {
+  '长生': '初生，生机旺盛',
+  '沐浴': '洗礼期，不稳定',
+  '冠带': '成长成熟，渐强',
+  '临官': '当权得势，大强',
+  '帝旺': '最旺盛，鼎盛期',
+  '衰': '开始衰退',
+  '病': '力量病弱',
+  '死': '无力，衰竭',
+  '墓': '入库收藏，极弱',
+  '绝': '消亡断绝',
+  '胎': '孕育中，将生',
+  '养': '养育期，蓄力',
 }
 
 export default function QimenPage() {
@@ -136,13 +150,6 @@ export default function QimenPage() {
           <div className="card">
             <div className="flex items-center justify-between mb-4">
               <h3 className="text-sm text-dark-400 font-medium">九宫盘局</h3>
-              <div className="flex gap-3 text-[11px]">
-                <span className="text-dark-400">八神</span>
-                <span className="text-dark-400">九星</span>
-                <span className="text-dark-400">天盘干</span>
-                <span className="text-dark-400">八门</span>
-                <span className="text-dark-400">地盘干</span>
-              </div>
             </div>
             
             <div className="grid grid-cols-3 gap-1.5">
@@ -151,6 +158,19 @@ export default function QimenPage() {
                 if (!palace) return <div key={gongNum} />
                 return <PalaceCell key={gongNum} palace={palace} monthZhi={monthZhi} />
               })}
+            </div>
+          </div>
+
+          {/* 十二长生备注 */}
+          <div className="card">
+            <h3 className="text-sm text-dark-400 font-medium mb-3">十二长生参考</h3>
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2">
+              {Object.entries(TWELVE_STATE_DESC).map(([state, desc]) => (
+                <div key={state} className="flex items-start gap-1.5 text-xs">
+                  <span className="text-amber-400 font-medium whitespace-nowrap">{state}</span>
+                  <span className="text-dark-500">{desc}</span>
+                </div>
+              ))}
             </div>
           </div>
         </>
@@ -184,7 +204,7 @@ function PillarCard({ label, value }: { label: string; value: string }) {
   )
 }
 
-// === 九宫格 Cell（五行颜色版）===
+// === 九宫格 Cell ===
 interface PalaceData {
   gongNumber: number
   gongName: string
@@ -207,39 +227,39 @@ function PalaceCell({ palace, monthZhi }: { palace: PalaceData; monthZhi: string
 
   return (
     <div className="bg-dark-800/40 border border-dark-700/30 rounded-lg p-2.5 min-h-[160px] relative flex flex-col justify-between">
-      {/* 左上角：卦名（宫位五行色） */}
+      {/* 左上角：卦名 */}
       <span className={`absolute top-1.5 left-2 text-[11px] font-bold ${gColor}`}>{guaName}</span>
       
-      {/* 左下角：宫位数字（宫位五行色） */}
+      {/* 左下角：宫位数字 */}
       <span className={`absolute bottom-1.5 left-2 text-sm font-bold ${gColor}`}>{gongNum}</span>
 
       {/* 主内容区 */}
       <div className="flex flex-col items-center gap-[3px] pt-4 pb-3">
-        {/* 八神（八神五行色） */}
+        {/* 八神 */}
         <span className={`text-xs font-medium ${shenColor(palace.baShen)}`}>{palace.baShen}</span>
         
-        {/* 九星（九星五行色）+ 天盘干（天干五行色） */}
+        {/* 九星 + 天盘干 */}
         <div className="flex items-center gap-1.5">
           <span className={`text-xs ${xingColor(palace.jiuXing)}`}>{palace.jiuXing}</span>
           <span className={`text-sm font-bold ${ganColor(palace.tianPanGan)}`}>{palace.tianPanGan}</span>
         </div>
         
-        {/* 九星旺衰 + 十二长生 */}
+        {/* 九星旺衰 + 天盘干十二长生 */}
         <div className="flex items-center gap-1 text-[10px]">
           <span className="text-dark-500">{xingStatus.gongWs}月{xingStatus.monthWs}</span>
-          {tianGanTwelve && <span className="text-dark-400">{tianGanTwelve}</span>}
+          {tianGanTwelve && <span className="text-amber-500/70">{tianGanTwelve}</span>}
         </div>
 
-        {/* 八门（八门五行色）+ 地盘干（天干五行色） */}
+        {/* 八门 + 地盘干 */}
         <div className="flex items-center gap-1.5 mt-1">
           <span className={`text-xs font-medium ${menColor(palace.baMen)}`}>{palace.baMen}</span>
           <span className={`text-xs ${ganColor(palace.diPanGan)}`}>{palace.diPanGan}</span>
         </div>
         
-        {/* 八门旺衰 + 十二长生 */}
+        {/* 八门旺衰 + 地盘干十二长生 */}
         <div className="flex items-center gap-1 text-[10px]">
           <span className="text-dark-500">{menStatus.gongWs}月{menStatus.monthWs}</span>
-          {diGanTwelve && <span className="text-dark-400">{diGanTwelve}</span>}
+          {diGanTwelve && <span className="text-amber-500/70">{diGanTwelve}</span>}
         </div>
       </div>
     </div>
