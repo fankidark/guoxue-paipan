@@ -713,6 +713,7 @@ function PalaceCell({ palace, monthZhi }: { palace: PalaceData; monthZhi: string
   
   const xingStatus = getXingStatus(palace.jiuXing, gongNum, monthZhi)
   const menStatus = getMenStatus(palace.baMen, gongNum, monthZhi)
+  const menPo = isMenPo(palace.baMen, gongNum)
   
   // 双地支十二长生
   const tianTwelve = getGanTwelveInGongDouble(palace.tianPanGan, gongNum)
