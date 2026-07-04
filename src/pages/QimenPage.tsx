@@ -90,23 +90,22 @@ const TWELVE_STATE_DESC: Record<string, string> = {
 export default function QimenPage() {
   const [datetime, setDatetime] = useState(formatDateTime(new Date()))
   const [result, setResult] = useState<QimenResult | null>(null)
-  const [history, setHistory] = useState<{ dt: string; label: string }[]>([])
-
-  // 加载历史记录
-  useEffect(() => {
+  const [history, setHistory] = useState<{ dt: string; label: string }[]>(() => {
     try {
       const saved = localStorage.getItem('qimen_history')
-      if (saved) setHistory(JSON.parse(saved))
-    } catch {}
-  }, [])
+      return saved ? JSON.parse(saved) : []
+    } catch { return [] }
+  })
 
   // 保存历史记录
   const saveToHistory = (dt: string, res: QimenResult) => {
     const label = `${res.datetime} ${res.isYangDun ? '阳' : '阴'}遁${res.juNumber}局 ${res.fuYin ? '伏吟' : res.fanYin ? '反吟' : ''}`
     const newItem = { dt, label: label.trim() }
-    const updated = [newItem, ...history.filter(h => h.dt !== dt)].slice(0, 20) // 最多保留20条
-    setHistory(updated)
-    try { localStorage.setItem('qimen_history', JSON.stringify(updated)) } catch {}
+    setHistory(prev => {
+      const updated = [newItem, ...prev.filter(h => h.dt !== dt)].slice(0, 20)
+      try { localStorage.setItem('qimen_history', JSON.stringify(updated)) } catch {}
+      return updated
+    })
   }
 
   const doPaipan = (dt?: Date) => {
