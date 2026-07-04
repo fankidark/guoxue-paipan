@@ -134,6 +134,8 @@ export default function QimenPage() {
               <InfoItem label="值使" value={result.zhiShi} color={menColor(result.zhiShi)} />
               <InfoItem label="旬首" value={result.xunShou} color="text-amber-500" />
               <InfoItem label="局式" value="拆补法-转盘奇门" />
+              {result.fuYin && <span className="text-xs text-pink-400 font-medium">伏吟</span>}
+              {result.fanYin && <span className="text-xs text-pink-400 font-medium">反吟</span>}
             </div>
           </div>
 

@@ -107,6 +107,8 @@ export interface QimenResult {
   palaces: QimenPalace[]
   xunShou: string
   datetime: string
+  fuYin: boolean      // 伏吟（天盘=地盘）
+  fanYin: boolean     // 反吟（旋转半圈）
 }
 
 // ============================================================================
@@ -263,6 +265,11 @@ export function calculateQimen(date?: Date): QimenResult {
   }
   // 中宫天盘 = 中宫地盘
   tianPan[5] = diPan[5]
+  
+  // 伏吟/反吟判断
+  const shift = (origIdx >= 0 && destIdx >= 0) ? (destIdx - origIdx + 8) % 8 : 0
+  const fuYin = shift === 0  // 不动=伏吟
+  const fanYin = shift === 4 // 半圈=反吟
 
   // === 第四步：排九星 ===
   // 值符星 = 值符原宫的本位星
@@ -426,7 +433,9 @@ export function calculateQimen(date?: Date): QimenResult {
     zhiShi: zhiShiMen,
     palaces,
     xunShou,
-    datetime: `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')} ${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}`
+    datetime: `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')} ${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}`,
+    fuYin,
+    fanYin,
   }
 }
 
