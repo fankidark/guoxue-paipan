@@ -229,6 +229,8 @@ export function calculateQimen(date?: Date): QimenResult {
   for (let g = 1; g <= 9; g++) {
     if (diPan[g] === xunYi) { zhiFuOrigGong = g; break }
   }
+  // 中宫寄坤2
+  if (zhiFuOrigGong === 5) zhiFuOrigGong = 2
   
   // 找时干（或时干对应六仪）在地盘的宫位 → 天盘值符落宫
   const hourGan = hourGZ[0]
@@ -239,6 +241,8 @@ export function calculateQimen(date?: Date): QimenResult {
   for (let g = 1; g <= 9; g++) {
     if (diPan[g] === hourGanInPan) { zhiFuDestGong = g; break }
   }
+  // 中宫寄坤2
+  if (zhiFuDestGong === 5) zhiFuDestGong = 2
   
   // 天盘干：将地盘以值符原宫为起点的排列，旋转到值符目标宫
   const tianPan: Record<number, string> = {}
