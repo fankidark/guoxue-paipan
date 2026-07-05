@@ -58,6 +58,9 @@ function gongColor(gong: number) { return WX_TEXT_COLOR[GONG_WX[gong] || '土'] 
 interface PalaceCellProps {
   palace: QimenPalace
   monthZhi: string
+  zhongGongGan?: string     // 中宫地盘干（寄坤标记用）
+  isZhiFuOrig?: boolean     // 是否值符原宫
+  isZhiFuDest?: boolean     // 是否值符目标宫
 }
 
 // ============================================================================
@@ -68,7 +71,7 @@ interface PalaceCellProps {
  * 九宫格单元格
  * - 响应式：大屏 min-h-[160px]，小屏 min-h-[120px]，字体也相应紧凑
  */
-export default function PalaceCell({ palace, monthZhi }: PalaceCellProps) {
+export default function PalaceCell({ palace, monthZhi, zhongGongGan, isZhiFuOrig, isZhiFuDest }: PalaceCellProps) {
   const { showDetail } = useDetail()
 
   const gongNum = palace.gongNumber
@@ -169,7 +172,7 @@ export default function PalaceCell({ palace, monthZhi }: PalaceCellProps) {
 
   return (
     /* 响应式：小屏 min-h-[120px]，大屏 min-h-[160px]；字体在小屏更紧凑 */
-    <div className="bg-dark-800/40 border border-dark-700/30 rounded-lg p-1.5 sm:p-2.5 min-h-[120px] sm:min-h-[160px] relative flex flex-col justify-between">
+    <div className={`bg-dark-800/40 border rounded-lg p-1.5 sm:p-2.5 min-h-[120px] sm:min-h-[160px] relative flex flex-col justify-between ${(isZhiFuOrig || isZhiFuDest) ? 'border-red-500/60 ring-1 ring-red-500/30' : 'border-dark-700/30'}`}>
       {/* 左上角：卦名 */}
       <span className={`absolute top-1 sm:top-1.5 left-1.5 sm:left-2 text-[10px] sm:text-[11px] font-bold ${gColor}`}>
         {guaName}
@@ -191,9 +194,12 @@ export default function PalaceCell({ palace, monthZhi }: PalaceCellProps) {
         )}
       </div>
 
-      {/* 左下角：宫位数字 */}
+      {/* 左下角：宫位数字 + 中宫寄干 */}
       <span className={`absolute bottom-1 sm:bottom-1.5 left-1.5 sm:left-2 text-xs sm:text-sm font-bold ${gColor}`}>
         {gongNum}
+        {zhongGongGan && (isZhiFuOrig || isZhiFuDest) && (
+          <span className="ml-0.5 text-[9px] sm:text-[10px] text-blue-400 font-normal">({zhongGongGan})</span>
+        )}
       </span>
 
       {/* 主内容区 */}

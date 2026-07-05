@@ -228,7 +228,14 @@ export default function QimenPage() {
                     {LUOSHU_ORDER.map((gongNum) => {
                       const palace = result.palaces.find((p) => p.gongNumber === gongNum)
                       if (!palace) return <div key={gongNum} />
-                      return <PalaceCell key={gongNum} palace={palace} monthZhi={monthZhi} />
+                      return <PalaceCell
+                        key={gongNum}
+                        palace={palace}
+                        monthZhi={monthZhi}
+                        zhongGongGan={result.zhongGongGan}
+                        isZhiFuOrig={gongNum === result.zhiFuOrigGong}
+                        isZhiFuDest={gongNum === result.zhiFuDestGong}
+                      />
                     })}
                   </div>
                   {/* 右方位：西 */}

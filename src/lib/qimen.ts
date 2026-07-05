@@ -112,6 +112,9 @@ export interface QimenResult {
   fuYin: boolean      // 伏吟（天盘=地盘）
   fanYin: boolean     // 反吟（旋转半圈）
   geJu: string[]      // 全局格局列表（如三奇得使等）
+  zhongGongGan: string  // 中宫地盘干（寄坤显示用）
+  zhiFuOrigGong: number // 值符原宫
+  zhiFuDestGong: number // 值符目标宫
 }
 
 // ============================================================================
@@ -522,6 +525,9 @@ export function calculateQimen(date?: Date): QimenResult {
     fuYin,
     fanYin,
     geJu: globalGeJu,
+    zhongGongGan: diPan[5] || '',
+    zhiFuOrigGong,
+    zhiFuDestGong,
   }
 }
 
