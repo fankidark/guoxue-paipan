@@ -194,9 +194,12 @@ export default function PalaceCell({ palace, monthZhi, zhongGongGan, isZhiFuOrig
         )}
       </div>
 
-      {/* 左下角：宫位数字 */}
+      {/* 左下角：宫位数字 + 目标宫寄干(普通文字) */}
       <span className={`absolute bottom-1 sm:bottom-1.5 left-1.5 sm:left-2 text-xs sm:text-sm font-bold ${gColor}`}>
         {gongNum}
+        {zhongGongGan && isZhiFuDest && (
+          <span className="ml-0.5 text-[9px] sm:text-[10px] text-blue-400 font-normal">{zhongGongGan}</span>
+        )}
       </span>
 
       {/* 主内容区 */}
@@ -247,10 +250,10 @@ export default function PalaceCell({ palace, monthZhi, zhongGongGan, isZhiFuOrig
           )}
         </div>
 
-        {/* 八门 + 地盘干 + 中宫寄干(门行左侧) */}
+        {/* 八门 + 地盘干 + 中宫寄干(仅原宫在门行左侧有框) */}
         <div className="flex items-center gap-1 sm:gap-1.5 mt-0.5 sm:mt-1">
-          {zhongGongGan && (isZhiFuOrig || isZhiFuDest) && (
-            <span className="text-[10px] sm:text-xs text-blue-400 font-bold border border-red-500/60 rounded px-0.5">{zhongGongGan}</span>
+          {zhongGongGan && isZhiFuOrig && (
+            <span className="text-[10px] sm:text-xs text-blue-400 font-bold border border-blue-400/60 rounded px-0.5">{zhongGongGan}</span>
           )}
           <span
             className={`text-[10px] sm:text-xs font-medium cursor-pointer hover:underline ${menColor(palace.baMen)}`}
@@ -263,6 +266,9 @@ export default function PalaceCell({ palace, monthZhi, zhongGongGan, isZhiFuOrig
 
         {/* 八门旺衰(可点击) + 门迫(可点击) + 十二长生(含刑，均可点击) */}
         <div className="flex items-center gap-0.5 sm:gap-1 text-[9px] sm:text-[10px]">
+          {zhongGongGan && isZhiFuOrig && (
+            <span className="text-amber-500/70">{getGanTwelveInGongDouble(zhongGongGan, gongNum)}</span>
+          )}
           <span className="text-dark-500">
             {menPo
               ? <span className="text-pink-400 cursor-pointer hover:underline" onClick={() => showSpecialDetail('迫')}>迫</span>
