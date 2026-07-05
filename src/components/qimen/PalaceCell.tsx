@@ -202,86 +202,80 @@ export default function PalaceCell({ palace, monthZhi, zhongGongGan, isZhiFuOrig
         )}
       </span>
 
-      {/* 主内容区 — 统一对齐布局 */}
-      <div className="flex flex-col items-center gap-[2px] sm:gap-[3px] pt-3.5 sm:pt-4 pb-2.5 sm:pb-3 w-full px-1">
+      {/* 主内容区 — 固定列宽精确对齐 */}
+      <div className="flex flex-col items-center pt-3.5 sm:pt-4 pb-2.5 sm:pb-3 w-full px-0.5">
         {/* 八神（居中独占一行） */}
         <span
-          className={`text-[10px] sm:text-xs font-medium cursor-pointer hover:underline ${shenColor(palace.baShen)}`}
+          className={`text-[10px] sm:text-xs font-medium cursor-pointer hover:underline mb-[2px] ${shenColor(palace.baShen)}`}
           onClick={() => showShenDetail(palace.baShen)}
         >{palace.baShen}</span>
 
-        {/* 九星行：原宫壬 | 九星 | 天盘干 — 用table-like布局确保对齐 */}
-        <div className="w-full">
-          <div className="flex justify-center items-center gap-0.5 sm:gap-1">
-            <span className="w-3 sm:w-4 text-right">
-              {zhongGongGan && isZhiFuOrig && (
-                <span className={`text-[10px] sm:text-xs font-bold ${ganColor(zhongGongGan)}`}>{zhongGongGan}</span>
-              )}
-            </span>
-            <span
-              className={`text-[10px] sm:text-xs cursor-pointer hover:underline min-w-[28px] sm:min-w-[32px] text-center ${xingColor(palace.jiuXing)}`}
-              onClick={() => showXingDetail(palace.jiuXing)}
-            >{palace.jiuXing}</span>
-            <span className={`text-xs sm:text-sm font-bold min-w-[20px] sm:min-w-[24px] text-center ${ganColor(palace.tianPanGan)}`}>
-              {palace.tianPanGan}
-              {palace.anGan && <span className="text-[8px] sm:text-[9px] text-dark-500 font-normal">({palace.anGan})</span>}
-            </span>
-          </div>
-          {/* 旺衰行：壬长生 | 星旺衰 | 天干长生 */}
-          <div className="flex justify-center items-center gap-0.5 sm:gap-1 text-[9px] sm:text-[10px]">
-            <span className="w-3 sm:w-4 text-right text-amber-500/70">
-              {zhongGongGan && isZhiFuOrig && (
-                <>
-                  {getGanTwelveInGongDouble(zhongGongGan, gongNum).split('').map((ch: string, i: number) => (
-                    <span key={i} className="cursor-pointer hover:underline" onClick={() => showTwelveDetail(ch)}>{ch}</span>
-                  ))}
-                </>
-              )}
-            </span>
-            <span className="min-w-[28px] sm:min-w-[32px] text-center text-dark-500">
-              <span className="cursor-pointer hover:text-dark-300" onClick={() => showWsDetail(xingStatus.gongWs)}>{xingStatus.gongWs}</span>
-              <span className="cursor-pointer hover:text-dark-300" onClick={() => showWsDetail(xingStatus.monthWs)}>月{xingStatus.monthWs}</span>
-            </span>
-            <span className="min-w-[20px] sm:min-w-[24px] text-center text-amber-500/70">
-              {tianXing ? (
-                <span className="text-pink-400 cursor-pointer hover:underline" onClick={() => showSpecialDetail('刑')}>刑</span>
-              ) : ''}
-              {tianTwelve.split('').map((ch, i) => (
-                <span key={i} className="cursor-pointer hover:underline" onClick={() => showTwelveDetail(ch)}>{ch}</span>
-              ))}
-            </span>
-          </div>
-        </div>
+        {/* 统一grid容器：所有行共享列宽 */}
+        <div className="grid grid-cols-[16px_1fr_1fr] sm:grid-cols-[20px_1fr_1fr] w-full gap-y-0 items-center">
+          {/* ─── 九星行 ─── */}
+          <span className="text-right pr-0.5">
+            {zhongGongGan && isZhiFuOrig && (
+              <span className={`text-[10px] sm:text-xs font-bold ${ganColor(zhongGongGan)}`}>{zhongGongGan}</span>
+            )}
+          </span>
+          <span
+            className={`text-[10px] sm:text-xs cursor-pointer hover:underline text-center ${xingColor(palace.jiuXing)}`}
+            onClick={() => showXingDetail(palace.jiuXing)}
+          >{palace.jiuXing}</span>
+          <span className={`text-xs sm:text-sm font-bold text-center ${ganColor(palace.tianPanGan)}`}>
+            {palace.tianPanGan}
+            {palace.anGan && <span className="text-[8px] sm:text-[9px] text-dark-500 font-normal">({palace.anGan})</span>}
+          </span>
 
-        {/* 八门行：空 | 八门 | 地盘干 */}
-        <div className="w-full mt-0.5 sm:mt-1">
-          <div className="flex justify-center items-center gap-0.5 sm:gap-1">
-            <span className="w-3 sm:w-4" />
-            <span
-              className={`text-[10px] sm:text-xs font-medium cursor-pointer hover:underline min-w-[28px] sm:min-w-[32px] text-center ${menColor(palace.baMen)}`}
-              onClick={() => showMenDetail(palace.baMen)}
-            >{palace.baMen}</span>
-            <span className={`text-[10px] sm:text-xs min-w-[20px] sm:min-w-[24px] text-center ${ganColor(palace.diPanGan)}`}>
-              {palace.diPanGan}
-            </span>
-          </div>
-          {/* 门旺衰行：空 | 门旺衰 | 地干长生 */}
-          <div className="flex justify-center items-center gap-0.5 sm:gap-1 text-[9px] sm:text-[10px]">
-            <span className="w-3 sm:w-4" />
-            <span className="min-w-[28px] sm:min-w-[32px] text-center text-dark-500">
-              {menPo
-                ? <span className="text-pink-400 cursor-pointer hover:underline" onClick={() => showSpecialDetail('迫')}>迫</span>
-                : <span className="cursor-pointer hover:text-dark-300" onClick={() => showWsDetail(menStatus.gongWs)}>{menStatus.gongWs}</span>
-              }
-              <span className="cursor-pointer hover:text-dark-300" onClick={() => showWsDetail(menStatus.monthWs)}>月{menStatus.monthWs}</span>
-            </span>
-            <span className="min-w-[20px] sm:min-w-[24px] text-center text-amber-500/70">
-              {diXing ? (<span className="text-pink-400 cursor-pointer hover:underline" onClick={() => showSpecialDetail('刑')}>刑</span>) : ''}
-              {diTwelve.split('').map((ch: string, i: number) => (
-                <span key={i} className="cursor-pointer hover:underline" onClick={() => showTwelveDetail(ch)}>{ch}</span>
-              ))}
-            </span>
-          </div>
+          {/* ─── 九星旺衰行 ─── */}
+          <span className="text-right pr-0.5 text-[9px] sm:text-[10px] text-amber-500/70">
+            {zhongGongGan && isZhiFuOrig && (
+              <>
+                {getGanTwelveInGongDouble(zhongGongGan, gongNum).split('').map((ch: string, i: number) => (
+                  <span key={i} className="cursor-pointer hover:underline" onClick={() => showTwelveDetail(ch)}>{ch}</span>
+                ))}
+              </>
+            )}
+          </span>
+          <span className="text-center text-[9px] sm:text-[10px] text-dark-500">
+            <span className="cursor-pointer hover:text-dark-300" onClick={() => showWsDetail(xingStatus.gongWs)}>{xingStatus.gongWs}</span>
+            <span className="cursor-pointer hover:text-dark-300" onClick={() => showWsDetail(xingStatus.monthWs)}>月{xingStatus.monthWs}</span>
+          </span>
+          <span className="text-center text-[9px] sm:text-[10px] text-amber-500/70">
+            {tianXing ? (
+              <span className="text-pink-400 cursor-pointer hover:underline" onClick={() => showSpecialDetail('刑')}>刑</span>
+            ) : ''}
+            {tianTwelve.split('').map((ch, i) => (
+              <span key={i} className="cursor-pointer hover:underline" onClick={() => showTwelveDetail(ch)}>{ch}</span>
+            ))}
+          </span>
+
+          {/* ─── 八门行（上方加间距） ─── */}
+          <span className="col-span-3 h-1 sm:h-1.5" />
+          <span />
+          <span
+            className={`text-[10px] sm:text-xs font-medium cursor-pointer hover:underline text-center ${menColor(palace.baMen)}`}
+            onClick={() => showMenDetail(palace.baMen)}
+          >{palace.baMen}</span>
+          <span className={`text-[10px] sm:text-xs text-center ${ganColor(palace.diPanGan)}`}>
+            {palace.diPanGan}
+          </span>
+
+          {/* ─── 八门旺衰行 ─── */}
+          <span />
+          <span className="text-center text-[9px] sm:text-[10px] text-dark-500">
+            {menPo
+              ? <span className="text-pink-400 cursor-pointer hover:underline" onClick={() => showSpecialDetail('迫')}>迫</span>
+              : <span className="cursor-pointer hover:text-dark-300" onClick={() => showWsDetail(menStatus.gongWs)}>{menStatus.gongWs}</span>
+            }
+            <span className="cursor-pointer hover:text-dark-300" onClick={() => showWsDetail(menStatus.monthWs)}>月{menStatus.monthWs}</span>
+          </span>
+          <span className="text-center text-[9px] sm:text-[10px] text-amber-500/70">
+            {diXing ? (<span className="text-pink-400 cursor-pointer hover:underline" onClick={() => showSpecialDetail('刑')}>刑</span>) : ''}
+            {diTwelve.split('').map((ch: string, i: number) => (
+              <span key={i} className="cursor-pointer hover:underline" onClick={() => showTwelveDetail(ch)}>{ch}</span>
+            ))}
+          </span>
         </div>
 
         {/* 格局标记（可点击查看详解） */}
