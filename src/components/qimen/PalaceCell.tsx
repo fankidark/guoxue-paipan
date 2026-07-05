@@ -194,12 +194,9 @@ export default function PalaceCell({ palace, monthZhi, zhongGongGan, isZhiFuOrig
         )}
       </div>
 
-      {/* 左下角：宫位数字 + 目标宫寄干(普通文字) */}
+      {/* 左下角：宫位数字 */}
       <span className={`absolute bottom-1 sm:bottom-1.5 left-1.5 sm:left-2 text-xs sm:text-sm font-bold ${gColor}`}>
         {gongNum}
-        {zhongGongGan && isZhiFuDest && (
-          <span className="ml-0.5 text-[9px] sm:text-[10px] text-blue-400 font-normal">{zhongGongGan}</span>
-        )}
       </span>
 
       {/* 主内容区 */}
@@ -210,8 +207,11 @@ export default function PalaceCell({ palace, monthZhi, zhongGongGan, isZhiFuOrig
           onClick={() => showShenDetail(palace.baShen)}
         >{palace.baShen}</span>
 
-        {/* 九星 + 天盘干（九星可点击） */}
+        {/* 九星 + 天盘干 + 原宫中宫壬(星行左侧) */}
         <div className="flex items-center gap-1 sm:gap-1.5">
+          {zhongGongGan && isZhiFuOrig && (
+            <span className="text-[10px] sm:text-xs text-blue-400 font-bold">{zhongGongGan}</span>
+          )}
           <span
             className={`text-[10px] sm:text-xs cursor-pointer hover:underline ${xingColor(palace.jiuXing)}`}
             onClick={() => showXingDetail(palace.jiuXing)}
@@ -225,8 +225,11 @@ export default function PalaceCell({ palace, monthZhi, zhongGongGan, isZhiFuOrig
           )}
         </div>
 
-        {/* 九星旺衰(可点击) + 十二长生(含刑，均可点击) */}
+        {/* 九星旺衰 + 原宫壬十二长生 */}
         <div className="flex items-center gap-0.5 sm:gap-1 text-[9px] sm:text-[10px]">
+          {zhongGongGan && isZhiFuOrig && (
+            <span className="text-amber-500/70">{getGanTwelveInGongDouble(zhongGongGan, gongNum)}</span>
+          )}
           <span
             className="text-dark-500 cursor-pointer hover:text-dark-300"
             onClick={() => showWsDetail(xingStatus.gongWs)}
@@ -250,13 +253,17 @@ export default function PalaceCell({ palace, monthZhi, zhongGongGan, isZhiFuOrig
           )}
         </div>
 
-        {/* 八门 + 地盘干 */}
+        {/* 八门 + 地盘干 + 目标宫壬在门行左侧 */}
         <div className="flex items-start gap-1 sm:gap-1.5 mt-0.5 sm:mt-1">
-          {/* 左列：原宫蓝色空框标记（值符出发位置） */}
+          {/* 原宫蓝色空框 */}
           {isZhiFuOrig && (
             <div className="flex flex-col items-center">
               <span className="w-4 h-4 sm:w-5 sm:h-5 border border-blue-400/70 rounded-sm"></span>
             </div>
+          )}
+          {/* 目标宫壬在门行左侧 */}
+          {zhongGongGan && isZhiFuDest && (
+            <span className="text-[10px] sm:text-xs text-blue-400 font-bold">{zhongGongGan}</span>
           )}
           {/* 门+地盘干 */}
           <div className="flex items-center gap-1">
