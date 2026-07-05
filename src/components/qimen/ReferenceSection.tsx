@@ -246,19 +246,18 @@ export default function ReferenceSection() {
       {/* 时辰五行速查 */}
       <div className="card">
         <h3 className="text-sm text-dark-400 font-medium mb-3">时辰五行速查</h3>
-        <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 gap-1.5 text-xs">
+        <div className="grid grid-cols-6 sm:grid-cols-12 gap-0.5 sm:gap-1 text-xs">
           {[
-            ['子时', '23:00-01:00', '深夜/凌晨', '水'], ['丑时', '01:00-03:00', '凌晨', '土'],
-            ['寅时', '03:00-05:00', '黎明前', '木'], ['卯时', '05:00-07:00', '日出/早晨', '木'],
-            ['辰时', '07:00-09:00', '早餐后', '土'], ['巳时', '09:00-11:00', '上午', '火'],
-            ['午时', '11:00-13:00', '中午', '火'], ['未时', '13:00-15:00', '下午', '土'],
-            ['申时', '15:00-17:00', '傍晚前', '金'], ['酉时', '17:00-19:00', '傍晚/下班', '金'],
-            ['戌时', '19:00-21:00', '晚上', '土'], ['亥时', '21:00-23:00', '深夜前', '水'],
-          ].map(([name, time, modern, wx]) => (
-            <div key={name} className="bg-dark-800/40 rounded px-2 py-1.5 text-center">
+            ['子时', '23-01', '水'], ['丑时', '01-03', '土'],
+            ['寅时', '03-05', '木'], ['卯时', '05-07', '木'],
+            ['辰时', '07-09', '土'], ['巳时', '09-11', '火'],
+            ['午时', '11-13', '火'], ['未时', '13-15', '土'],
+            ['申时', '15-17', '金'], ['酉时', '17-19', '金'],
+            ['戌时', '19-21', '土'], ['亥时', '21-23', '水'],
+          ].map(([name, time, wx]) => (
+            <div key={name} className="bg-dark-800/40 rounded px-1 py-1 text-center">
               <div className={`font-medium ${WX_TEXT_COLOR[wx]}`}>{name}</div>
-              <div className="text-dark-400 text-[10px]">{time}</div>
-              <div className="text-dark-600 text-[9px]">{modern}</div>
+              <div className="text-dark-500 text-[9px]">{time}</div>
             </div>
           ))}
         </div>
