@@ -1,10 +1,14 @@
 import { useState, useEffect, useMemo } from 'react'
 import { MOD_BASICS } from '../data/knowledge/mod-basics'
+import { MOD_PAIPAN } from '../data/knowledge/mod-paipan'
+import { MOD_GEJU } from '../data/knowledge/mod-geju'
 import { registerModule, searchKnowledge, getModules } from '../data/knowledge/search'
 import type { KnowledgeEntry, KnowledgeChapter, KnowledgeModule, SearchResult } from '../data/knowledge/types'
 
 // 注册所有模块
 registerModule(MOD_BASICS)
+registerModule(MOD_PAIPAN)
+registerModule(MOD_GEJU)
 
 // 五行颜色
 const WX_COLOR: Record<string, string> = {
