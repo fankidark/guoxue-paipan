@@ -204,9 +204,9 @@ export default function PalaceCell({ palace, monthZhi, zhongGongGan, isZhiFuOrig
 
       {/* 主内容区 — 固定列宽精确对齐 */}
       <div className="flex flex-col items-center pt-3.5 sm:pt-4 pb-2.5 sm:pb-3 w-full px-0.5">
-        {/* 统一grid容器：所有行共享列宽，整体居中 */}
-        <div className="grid grid-cols-[16px_auto_auto] sm:grid-cols-[20px_auto_auto] w-full gap-y-0 items-center justify-center">
-          {/* ─── 八神行（居中） ─── */}
+        {/* 统一grid容器：固定三列宽度，有间隔，精确对齐 */}
+        <div className="grid grid-cols-[14px_1fr_1fr] sm:grid-cols-[18px_1fr_1fr] w-full gap-y-0 gap-x-1 sm:gap-x-1.5 items-center">
+          {/* ─── 八神行（跨2-3列居中） ─── */}
           <span />
           <span
             className={`text-[10px] sm:text-xs font-medium cursor-pointer hover:underline text-center col-span-2 ${shenColor(palace.baShen)}`}
