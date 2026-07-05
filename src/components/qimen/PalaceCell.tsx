@@ -194,12 +194,9 @@ export default function PalaceCell({ palace, monthZhi, zhongGongGan, isZhiFuOrig
         )}
       </div>
 
-      {/* 左下角：宫位数字 + 中宫寄干 */}
+      {/* 左下角：宫位数字 */}
       <span className={`absolute bottom-1 sm:bottom-1.5 left-1.5 sm:left-2 text-xs sm:text-sm font-bold ${gColor}`}>
         {gongNum}
-        {zhongGongGan && (isZhiFuOrig || isZhiFuDest) && (
-          <span className="ml-0.5 text-[9px] sm:text-[10px] text-blue-400 font-normal">({zhongGongGan})</span>
-        )}
       </span>
 
       {/* 主内容区 */}
@@ -250,8 +247,11 @@ export default function PalaceCell({ palace, monthZhi, zhongGongGan, isZhiFuOrig
           )}
         </div>
 
-        {/* 八门 + 地盘干（八门可点击） */}
+        {/* 八门 + 地盘干（八门可点击）+ 中宫寄干 */}
         <div className="flex items-center gap-1 sm:gap-1.5 mt-0.5 sm:mt-1">
+          {zhongGongGan && (isZhiFuOrig || isZhiFuDest) && (
+            <span className="text-[10px] sm:text-xs text-blue-400 font-bold border border-red-500/60 rounded px-0.5">{zhongGongGan}</span>
+          )}
           <span
             className={`text-[10px] sm:text-xs font-medium cursor-pointer hover:underline ${menColor(palace.baMen)}`}
             onClick={() => showMenDetail(palace.baMen)}
