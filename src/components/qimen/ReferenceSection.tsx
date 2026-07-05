@@ -257,10 +257,10 @@ export default function ReferenceSection() {
                     const my = (from.y + to.y) / 2 - (to.x - from.x) * 0.15
                     return <path key={`sheng${i}`} d={`M${from.x},${from.y} Q${mx},${my} ${to.x},${to.y}`} fill="none" stroke="#22c55e" strokeWidth="1.2" opacity="0.7" markerEnd="url(#arrowGreen)" />
                   })}
-                  {/* 相克线（红色，五角星内线） */}
+                  {/* 相克线（红色虚线，五角星内线，带箭头） */}
                   {[0,1,2,3,4].map(i => {
                     const from = pts[i], to = pts[(i+2)%5]
-                    return <line key={`ke${i}`} x1={from.x} y1={from.y} x2={to.x} y2={to.y} stroke="#ef4444" strokeWidth="1" opacity="0.5" strokeDasharray="3,2" />
+                    return <line key={`ke${i}`} x1={from.x} y1={from.y} x2={to.x} y2={to.y} stroke="#ef4444" strokeWidth="1" opacity="0.5" strokeDasharray="3,2" markerEnd="url(#arrowRed)" />
                   })}
                   {/* 五行圆点+文字 */}
                   {pts.map((p, i) => (
@@ -275,6 +275,9 @@ export default function ReferenceSection() {
                     <marker id="arrowGreen" markerWidth="6" markerHeight="6" refX="5" refY="3" orient="auto">
                       <path d="M0,0 L6,3 L0,6" fill="none" stroke="#22c55e" strokeWidth="1" />
                     </marker>
+                    <marker id="arrowRed" markerWidth="6" markerHeight="6" refX="5" refY="3" orient="auto">
+                      <path d="M0,0 L6,3 L0,6" fill="none" stroke="#ef4444" strokeWidth="1" />
+                    </marker>
                   </defs>
                 </>
               )
@@ -283,16 +286,17 @@ export default function ReferenceSection() {
         </div>
         {/* 图例 */}
         <div className="flex justify-center gap-4 mt-2 text-[10px] sm:text-xs">
-          <span className="flex items-center gap-1"><span className="w-4 h-0.5 bg-green-500 inline-block rounded" /> <span className="text-green-400">相生</span> <span className="text-dark-500">（生我为母，我生为子）</span></span>
-          <span className="flex items-center gap-1"><span className="w-4 h-0.5 bg-red-500 inline-block rounded border-dashed" style={{borderTop:'1px dashed #ef4444', height:0}} /> <span className="text-red-400">相克</span> <span className="text-dark-500">（克我为官，我克为财）</span></span>
+          <span className="flex items-center gap-1"><span className="w-4 h-0.5 bg-green-500 inline-block rounded" /> <span className="text-green-400">→ 相生</span></span>
+          <span className="flex items-center gap-1"><span className="w-4 h-0 inline-block" style={{borderTop:'1.5px dashed #ef4444'}} /> <span className="text-red-400">→ 相克</span></span>
         </div>
+        <div className="text-center text-[9px] text-dark-500 mt-1">箭头方向 = 谁生/克谁（A→B 即 A生B 或 A克B）</div>
         {/* 文字补充 */}
         <div className="grid grid-cols-2 gap-2 mt-3 text-[10px] sm:text-xs text-dark-400">
           <div>
-            <span className="text-green-400 font-medium">相生→</span> 木生火 · 火生土 · 土生金 · 金生水 · 水生木
+            <span className="text-green-400 font-medium">相生→</span> 木→火→土→金→水→木
           </div>
           <div>
-            <span className="text-red-400 font-medium">相克→</span> 木克土 · 土克水 · 水克火 · 火克金 · 金克木
+            <span className="text-red-400 font-medium">相克→</span> 木→土·火→金·土→水·金→木·水→火
           </div>
         </div>
       </div>
