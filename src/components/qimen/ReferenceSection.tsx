@@ -335,16 +335,18 @@ export default function ReferenceSection() {
         <h3 className="text-sm text-dark-400 font-medium mb-3">时辰五行速查</h3>
         <div className="grid grid-cols-6 sm:grid-cols-12 gap-0.5 sm:gap-1 text-xs">
           {[
-            ['子时', '23-01', '水'], ['丑时', '01-03', '土'],
-            ['寅时', '03-05', '木'], ['卯时', '05-07', '木'],
-            ['辰时', '07-09', '土'], ['巳时', '09-11', '火'],
-            ['午时', '11-13', '火'], ['未时', '13-15', '土'],
-            ['申时', '15-17', '金'], ['酉时', '17-19', '金'],
-            ['戌时', '19-21', '土'], ['亥时', '21-23', '水'],
-          ].map(([name, time, wx]) => (
-            <div key={name} className="bg-dark-800/40 rounded px-1 py-1 text-center">
+            ['子时', 'zǐ', '23-01', '深夜', '水'], ['丑时', 'chǒu', '01-03', '凌晨', '土'],
+            ['寅时', 'yín', '03-05', '黎明', '木'], ['卯时', 'mǎo', '05-07', '日出', '木'],
+            ['辰时', 'chén', '07-09', '早食', '土'], ['巳时', 'sì', '09-11', '上午', '火'],
+            ['午时', 'wǔ', '11-13', '正午', '火'], ['未时', 'wèi', '13-15', '午后', '土'],
+            ['申时', 'shēn', '15-17', '下午', '金'], ['酉时', 'yǒu', '17-19', '傍晚', '金'],
+            ['戌时', 'xū', '19-21', '黄昏', '土'], ['亥时', 'hài', '21-23', '入夜', '水'],
+          ].map(([name, pinyin, time, desc, wx]) => (
+            <div key={name} className="bg-dark-800/40 rounded px-1 py-1.5 text-center">
+              <div className="text-dark-600 text-[8px] leading-tight">{pinyin}</div>
               <div className={`font-medium ${WX_TEXT_COLOR[wx]}`}>{name}</div>
               <div className="text-dark-500 text-[9px]">{time}</div>
+              <div className="text-dark-600 text-[8px]">{desc}</div>
             </div>
           ))}
         </div>
