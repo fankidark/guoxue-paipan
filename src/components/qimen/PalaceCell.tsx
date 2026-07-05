@@ -194,12 +194,9 @@ export default function PalaceCell({ palace, monthZhi, zhongGongGan, isZhiFuOrig
         )}
       </div>
 
-      {/* 左下角：宫位数字 + 坤2宫寄干 */}
+      {/* 左下角：宫位数字 */}
       <span className={`absolute bottom-1 sm:bottom-1.5 left-1.5 sm:left-2 text-xs sm:text-sm font-bold ${gColor}`}>
         {gongNum}
-        {zhongGongGan && isZhiFuDest && (
-          <span className="ml-0.5 text-[9px] sm:text-[10px] text-blue-400 border border-red-500/60 rounded px-0.5">{zhongGongGan}</span>
-        )}
       </span>
 
       {/* 主内容区 */}
@@ -210,11 +207,8 @@ export default function PalaceCell({ palace, monthZhi, zhongGongGan, isZhiFuOrig
           onClick={() => showShenDetail(palace.baShen)}
         >{palace.baShen}</span>
 
-        {/* 九星 + 天盘干 + 中宫寄干(原宫在九星左侧) */}
+        {/* 九星 + 天盘干（九星可点击） */}
         <div className="flex items-center gap-1 sm:gap-1.5">
-          {zhongGongGan && isZhiFuOrig && (
-            <span className="text-[10px] sm:text-xs text-blue-400 font-bold border border-red-500/60 rounded px-0.5">{zhongGongGan}</span>
-          )}
           <span
             className={`text-[10px] sm:text-xs cursor-pointer hover:underline ${xingColor(palace.jiuXing)}`}
             onClick={() => showXingDetail(palace.jiuXing)}
@@ -228,11 +222,8 @@ export default function PalaceCell({ palace, monthZhi, zhongGongGan, isZhiFuOrig
           )}
         </div>
 
-        {/* 九星旺衰(可点击) + 十二长生(含刑，均可点击) + 中宫寄干旺衰 */}
+        {/* 九星旺衰(可点击) + 十二长生(含刑，均可点击) */}
         <div className="flex items-center gap-0.5 sm:gap-1 text-[9px] sm:text-[10px]">
-          {zhongGongGan && isZhiFuOrig && (
-            <span className="text-amber-500/70">{getGanTwelveInGongDouble(zhongGongGan, gongNum)}</span>
-          )}
           <span
             className="text-dark-500 cursor-pointer hover:text-dark-300"
             onClick={() => showWsDetail(xingStatus.gongWs)}
@@ -256,8 +247,11 @@ export default function PalaceCell({ palace, monthZhi, zhongGongGan, isZhiFuOrig
           )}
         </div>
 
-        {/* 八门 + 地盘干 */}
+        {/* 八门 + 地盘干 + 中宫寄干(门行左侧) */}
         <div className="flex items-center gap-1 sm:gap-1.5 mt-0.5 sm:mt-1">
+          {zhongGongGan && (isZhiFuOrig || isZhiFuDest) && (
+            <span className="text-[10px] sm:text-xs text-blue-400 font-bold border border-red-500/60 rounded px-0.5">{zhongGongGan}</span>
+          )}
           <span
             className={`text-[10px] sm:text-xs font-medium cursor-pointer hover:underline ${menColor(palace.baMen)}`}
             onClick={() => showMenDetail(palace.baMen)}
