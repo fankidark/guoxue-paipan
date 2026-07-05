@@ -12,7 +12,7 @@ import {
 import { getGanTwelveInGongDouble, hasXingInGong } from '../../lib/qimen-twelve'
 import {
   XING_DETAIL, MEN_DETAIL, SHEN_DETAIL,
-  SPECIAL_DETAIL, WANGSHUAI_DETAIL, TWELVE_DETAIL,
+  SPECIAL_DETAIL, WANGSHUAI_DETAIL, TWELVE_DETAIL, GEJU_DETAIL,
 } from '../../lib/qimen-details'
 
 // ============================================================================
@@ -285,11 +285,25 @@ export default function PalaceCell({ palace, monthZhi, zhongGongGan, isZhiFuOrig
           )}
         </div>
 
-        {/* 格局标记 */}
+        {/* 格局标记（可点击查看详解） */}
         {geJu.length > 0 && (
           <div className="flex flex-wrap justify-center gap-0.5 mt-0.5">
-            {geJu.map((g, i) => (
-              <span key={i} className="text-[9px] sm:text-[10px] text-purple-400 bg-purple-900/30 rounded px-0.5">
+            {geJu.map((g: string, i: number) => (
+              <span
+                key={i}
+                className={`text-[9px] sm:text-[10px] text-purple-400 bg-purple-900/30 rounded px-0.5 ${GEJU_DETAIL[g] ? 'cursor-pointer hover:bg-purple-900/60' : ''}`}
+                onClick={() => {
+                  const d = GEJU_DETAIL[g]
+                  if (d) {
+                    showDetail(d.title, (
+                      <div className="space-y-2">
+                        <p>{d.desc}</p>
+                        <div><span className="text-dark-400 font-medium">吉凶：</span>{d.吉凶}</div>
+                      </div>
+                    ))
+                  }
+                }}
+              >
                 {g}
               </span>
             ))}
