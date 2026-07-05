@@ -230,7 +230,11 @@ export default function PalaceCell({ palace, monthZhi, zhongGongGan, isZhiFuOrig
         {/* 九星旺衰 + 原宫壬十二长生(左侧) */}
         <div className="flex items-center gap-0.5 sm:gap-1 text-[9px] sm:text-[10px]">
           {zhongGongGan && isZhiFuOrig && (
-            <span className="text-amber-500/70">{getGanTwelveInGongDouble(zhongGongGan, gongNum)}</span>
+            <span className="text-amber-500/70">
+              {getGanTwelveInGongDouble(zhongGongGan, gongNum).split('').map((ch: string, i: number) => (
+                <span key={i} className="cursor-pointer hover:underline" onClick={() => showTwelveDetail(ch)}>{ch}</span>
+              ))}
+            </span>
           )}
           <span
             className="text-dark-500 cursor-pointer hover:text-dark-300"
