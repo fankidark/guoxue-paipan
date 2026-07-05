@@ -210,8 +210,11 @@ export default function PalaceCell({ palace, monthZhi, zhongGongGan, isZhiFuOrig
           onClick={() => showShenDetail(palace.baShen)}
         >{palace.baShen}</span>
 
-        {/* 九星 + 天盘干（九星可点击） */}
+        {/* 九星 + 天盘干 + 原宫中宫壬(星行左侧) */}
         <div className="flex items-center gap-1 sm:gap-1.5">
+          {zhongGongGan && isZhiFuOrig && (
+            <span className="text-[10px] sm:text-xs text-blue-400 font-bold">{zhongGongGan}</span>
+          )}
           <span
             className={`text-[10px] sm:text-xs cursor-pointer hover:underline ${xingColor(palace.jiuXing)}`}
             onClick={() => showXingDetail(palace.jiuXing)}
@@ -219,14 +222,16 @@ export default function PalaceCell({ palace, monthZhi, zhongGongGan, isZhiFuOrig
           <span className={`text-xs sm:text-sm font-bold ${ganColor(palace.tianPanGan)}`}>
             {palace.tianPanGan}
           </span>
-          {/* 暗干（小字显示，浅色） */}
           {palace.anGan && (
             <span className="text-[9px] text-dark-500 leading-none">({palace.anGan})</span>
           )}
         </div>
 
-        {/* 九星旺衰(可点击) + 十二长生(含刑，均可点击) */}
+        {/* 九星旺衰 + 原宫壬十二长生(左侧) */}
         <div className="flex items-center gap-0.5 sm:gap-1 text-[9px] sm:text-[10px]">
+          {zhongGongGan && isZhiFuOrig && (
+            <span className="text-amber-500/70">{getGanTwelveInGongDouble(zhongGongGan, gongNum)}</span>
+          )}
           <span
             className="text-dark-500 cursor-pointer hover:text-dark-300"
             onClick={() => showWsDetail(xingStatus.gongWs)}
