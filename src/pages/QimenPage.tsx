@@ -224,7 +224,7 @@ export default function QimenPage() {
                   {/* 左方位：东 */}
                   <div className="text-[10px] text-dark-500 w-4 text-center shrink-0">东</div>
                   {/* 九宫格：响应式 gap */}
-                  <div className="grid grid-cols-3 gap-1 sm:gap-1.5 flex-1">
+                  <div className="grid grid-cols-3 gap-0.5 sm:gap-1 flex-1">
                     {LUOSHU_ORDER.map((gongNum) => {
                       const palace = result.palaces.find((p) => p.gongNumber === gongNum)
                       if (!palace) return <div key={gongNum} />
