@@ -2,6 +2,7 @@ import { Routes, Route, NavLink } from 'react-router-dom'
 import BaziPage from './pages/BaziPage'
 import QimenPage from './pages/QimenPage'
 import MeihuaPage from './pages/MeihuaPage'
+import KnowledgePage from './pages/KnowledgePage'
 
 function App() {
   return (
@@ -22,6 +23,9 @@ function App() {
             <NavLink to="/meihua" className={({isActive}) => 
               `px-3 py-1.5 rounded-md text-sm font-medium transition-colors ${isActive ? 'bg-primary-600 text-white' : 'text-dark-400 hover:text-dark-200 hover:bg-dark-800'}`
             }>梅花易数</NavLink>
+            <NavLink to="/knowledge" className={({isActive}) => 
+              `px-3 py-1.5 rounded-md text-sm font-medium transition-colors ${isActive ? 'bg-primary-600 text-white' : 'text-dark-400 hover:text-dark-200 hover:bg-dark-800'}`
+            }>知识库</NavLink>
           </nav>
         </div>
       </header>
@@ -32,6 +36,7 @@ function App() {
           <Route path="/" element={<BaziPage />} />
           <Route path="/qimen" element={<QimenPage />} />
           <Route path="/meihua" element={<MeihuaPage />} />
+          <Route path="/knowledge" element={<KnowledgePage />} />
         </Routes>
       </main>
       
