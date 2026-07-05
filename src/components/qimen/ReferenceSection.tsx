@@ -250,17 +250,28 @@ export default function ReferenceSection() {
               
               return (
                 <>
-                  {/* 相生线（绿色，顺时针外圈弧线用直线代替） */}
+                  {/* 相生线（绿色，顺时针外圈弧线） */}
                   {[0,1,2,3,4].map(i => {
                     const from = pts[i], to = pts[(i+1)%5]
-                    const mx = (from.x + to.x) / 2 + (to.y - from.y) * 0.15
-                    const my = (from.y + to.y) / 2 - (to.x - from.x) * 0.15
-                    return <path key={`sheng${i}`} d={`M${from.x},${from.y} Q${mx},${my} ${to.x},${to.y}`} fill="none" stroke="#22c55e" strokeWidth="1.2" opacity="0.7" markerEnd="url(#arrowGreen)" />
+                    // 计算起点和终点偏移（不进入圆内）
+                    const dx = to.x - from.x, dy = to.y - from.y
+                    const dist = Math.sqrt(dx*dx + dy*dy)
+                    const nx = dx/dist, ny = dy/dist
+                    const x1 = from.x + nx * 18, y1 = from.y + ny * 18
+                    const x2 = to.x - nx * 20, y2 = to.y - ny * 20
+                    const mx = (x1 + x2) / 2 + (y2 - y1) * 0.2
+                    const my = (y1 + y2) / 2 - (x2 - x1) * 0.2
+                    return <path key={`sheng${i}`} d={`M${x1},${y1} Q${mx},${my} ${x2},${y2}`} fill="none" stroke="#22c55e" strokeWidth="1.5" opacity="0.8" markerEnd="url(#arrowGreen)" />
                   })}
-                  {/* 相克线（红色虚线，五角星内线，带箭头） */}
+                  {/* 相克线（红色虚线，五角星内线） */}
                   {[0,1,2,3,4].map(i => {
                     const from = pts[i], to = pts[(i+2)%5]
-                    return <line key={`ke${i}`} x1={from.x} y1={from.y} x2={to.x} y2={to.y} stroke="#ef4444" strokeWidth="1" opacity="0.5" strokeDasharray="3,2" markerEnd="url(#arrowRed)" />
+                    const dx = to.x - from.x, dy = to.y - from.y
+                    const dist = Math.sqrt(dx*dx + dy*dy)
+                    const nx = dx/dist, ny = dy/dist
+                    const x1 = from.x + nx * 18, y1 = from.y + ny * 18
+                    const x2 = to.x - nx * 20, y2 = to.y - ny * 20
+                    return <line key={`ke${i}`} x1={x1} y1={y1} x2={x2} y2={y2} stroke="#ef4444" strokeWidth="1.2" opacity="0.6" strokeDasharray="4,3" markerEnd="url(#arrowRed)" />
                   })}
                   {/* 五行圆点+文字 */}
                   {pts.map((p, i) => (
@@ -270,13 +281,13 @@ export default function ReferenceSection() {
                       <text x={p.x} y={p.y + 5} textAnchor="middle" fill={p.color} fontSize="13" fontWeight="bold">{p.name}</text>
                     </g>
                   ))}
-                  {/* 箭头标记 */}
+                  {/* 箭头标记（放大） */}
                   <defs>
-                    <marker id="arrowGreen" markerWidth="6" markerHeight="6" refX="5" refY="3" orient="auto">
-                      <path d="M0,0 L6,3 L0,6" fill="none" stroke="#22c55e" strokeWidth="1" />
+                    <marker id="arrowGreen" markerWidth="10" markerHeight="8" refX="8" refY="4" orient="auto">
+                      <path d="M0,0 L10,4 L0,8" fill="#22c55e" opacity="0.9" />
                     </marker>
-                    <marker id="arrowRed" markerWidth="6" markerHeight="6" refX="5" refY="3" orient="auto">
-                      <path d="M0,0 L6,3 L0,6" fill="none" stroke="#ef4444" strokeWidth="1" />
+                    <marker id="arrowRed" markerWidth="10" markerHeight="8" refX="8" refY="4" orient="auto">
+                      <path d="M0,0 L10,4 L0,8" fill="#ef4444" opacity="0.8" />
                     </marker>
                   </defs>
                 </>
