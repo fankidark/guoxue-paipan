@@ -250,25 +250,28 @@ export default function PalaceCell({ palace, monthZhi, zhongGongGan, isZhiFuOrig
           )}
         </div>
 
-        {/* 八门 + 地盘干 + 中宫寄干(仅原宫在门行左侧有框) */}
-        <div className="flex items-center gap-1 sm:gap-1.5 mt-0.5 sm:mt-1">
-          {zhongGongGan && isZhiFuOrig && (
-            <span className="text-[10px] sm:text-xs text-blue-400 font-bold border border-blue-400/60 rounded px-0.5">{zhongGongGan}</span>
+        {/* 八门 + 地盘干 */}
+        <div className="flex items-start gap-1 sm:gap-1.5 mt-0.5 sm:mt-1">
+          {/* 左列：原宫蓝色空框标记（值符出发位置） */}
+          {isZhiFuOrig && (
+            <div className="flex flex-col items-center">
+              <span className="w-4 h-4 sm:w-5 sm:h-5 border border-blue-400/70 rounded-sm"></span>
+            </div>
           )}
-          <span
-            className={`text-[10px] sm:text-xs font-medium cursor-pointer hover:underline ${menColor(palace.baMen)}`}
-            onClick={() => showMenDetail(palace.baMen)}
-          >{palace.baMen}</span>
-          <span className={`text-[10px] sm:text-xs ${ganColor(palace.diPanGan)}`}>
-            {palace.diPanGan}
-          </span>
+          {/* 门+地盘干 */}
+          <div className="flex items-center gap-1">
+            <span
+              className={`text-[10px] sm:text-xs font-medium cursor-pointer hover:underline ${menColor(palace.baMen)}`}
+              onClick={() => showMenDetail(palace.baMen)}
+            >{palace.baMen}</span>
+            <span className={`text-[10px] sm:text-xs ${ganColor(palace.diPanGan)}`}>
+              {palace.diPanGan}
+            </span>
+          </div>
         </div>
 
         {/* 八门旺衰(可点击) + 门迫(可点击) + 十二长生(含刑，均可点击) */}
         <div className="flex items-center gap-0.5 sm:gap-1 text-[9px] sm:text-[10px]">
-          {zhongGongGan && isZhiFuOrig && (
-            <span className="text-amber-500/70">{getGanTwelveInGongDouble(zhongGongGan, gongNum)}</span>
-          )}
           <span className="text-dark-500">
             {menPo
               ? <span className="text-pink-400 cursor-pointer hover:underline" onClick={() => showSpecialDetail('迫')}>迫</span>
