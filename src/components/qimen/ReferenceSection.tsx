@@ -227,7 +227,34 @@ export default function ReferenceSection() {
       {/* 五行相生相克图 */}
       <div className="card">
         <h3 className="text-sm text-dark-400 font-medium mb-3">五行相生相克</h3>
-        <div className="flex justify-center">
+        <div className="flex items-center gap-4">
+          {/* 左侧文字说明 */}
+          <div className="flex flex-col gap-2 text-[11px] sm:text-xs shrink-0">
+            <div>
+              <div className="text-green-400 font-medium mb-1">相生 →</div>
+              <div className="flex items-center flex-wrap gap-0.5">
+                <span className="text-green-400">木</span><span className="text-dark-600">→</span>
+                <span className="text-red-400">火</span><span className="text-dark-600">→</span>
+                <span className="text-amber-600">土</span><span className="text-dark-600">→</span>
+                <span className="text-yellow-400">金</span><span className="text-dark-600">→</span>
+                <span className="text-blue-400">水</span><span className="text-dark-600">→</span>
+                <span className="text-green-400">木</span>
+              </div>
+            </div>
+            <div>
+              <div className="text-red-400 font-medium mb-1">相克 →</div>
+              <div className="flex items-center flex-wrap gap-0.5">
+                <span className="text-green-400">木</span><span className="text-dark-600">→</span>
+                <span className="text-amber-600">土</span><span className="text-dark-600">→</span>
+                <span className="text-blue-400">水</span><span className="text-dark-600">→</span>
+                <span className="text-red-400">火</span><span className="text-dark-600">→</span>
+                <span className="text-yellow-400">金</span><span className="text-dark-600">→</span>
+                <span className="text-green-400">木</span>
+              </div>
+            </div>
+          </div>
+          {/* 右侧SVG图 */}
+          <div className="flex-1 flex justify-center">
           <svg viewBox="0 0 200 200" className="w-48 h-48 sm:w-56 sm:h-56">
             {/* 五行位置（五角形）：火上、木左、水左下、金右下、土右 */}
             {/* 角度：火=270°(上), 木=198°, 水=126°, 金=54°, 土=342° → 调整为标准五行图 */}
@@ -294,21 +321,12 @@ export default function ReferenceSection() {
               )
             })()}
           </svg>
+          </div>
         </div>
         {/* 图例 */}
         <div className="flex justify-center gap-4 mt-2 text-[10px] sm:text-xs">
           <span className="flex items-center gap-1"><span className="w-4 h-0.5 bg-green-500 inline-block rounded" /> <span className="text-green-400">→ 相生</span></span>
           <span className="flex items-center gap-1"><span className="w-4 h-0 inline-block" style={{borderTop:'1.5px dashed #ef4444'}} /> <span className="text-red-400">→ 相克</span></span>
-        </div>
-        <div className="text-center text-[9px] text-dark-500 mt-1">箭头方向 = 谁生/克谁（A→B 即 A生B 或 A克B）</div>
-        {/* 文字补充 */}
-        <div className="grid grid-cols-2 gap-2 mt-3 text-[10px] sm:text-xs text-dark-400">
-          <div>
-            <span className="text-green-400 font-medium">相生→</span> 木→火→土→金→水→木
-          </div>
-          <div>
-            <span className="text-red-400 font-medium">相克→</span> 木→土·火→金·土→水·金→木·水→火
-          </div>
         </div>
       </div>
 
