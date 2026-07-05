@@ -194,9 +194,12 @@ export default function PalaceCell({ palace, monthZhi, zhongGongGan, isZhiFuOrig
         )}
       </div>
 
-      {/* 左下角：宫位数字 */}
+      {/* 左下角：宫位数字 + 坤2宫寄干 */}
       <span className={`absolute bottom-1 sm:bottom-1.5 left-1.5 sm:left-2 text-xs sm:text-sm font-bold ${gColor}`}>
         {gongNum}
+        {zhongGongGan && isZhiFuDest && (
+          <span className="ml-0.5 text-[9px] sm:text-[10px] text-blue-400 border border-red-500/60 rounded px-0.5">{zhongGongGan}</span>
+        )}
       </span>
 
       {/* 主内容区 */}
@@ -247,10 +250,10 @@ export default function PalaceCell({ palace, monthZhi, zhongGongGan, isZhiFuOrig
           )}
         </div>
 
-        {/* 八门 + 地盘干 + 中宫寄干（两列布局） */}
+        {/* 八门 + 地盘干 + 中宫寄干（艮8原宫左列布局） */}
         <div className="flex items-start gap-1 sm:gap-1.5 mt-0.5 sm:mt-1">
-          {/* 左列：中宫寄干 + 旺衰 */}
-          {zhongGongGan && (isZhiFuOrig || isZhiFuDest) && (
+          {/* 左列：中宫寄干 + 旺衰（仅原宫显示） */}
+          {zhongGongGan && isZhiFuOrig && (
             <div className="flex flex-col items-center gap-[1px]">
               <span className="text-[10px] sm:text-xs text-blue-400 font-bold border border-red-500/60 rounded px-0.5">{zhongGongGan}</span>
               <span className="text-[9px] sm:text-[10px] text-amber-500/70">
@@ -259,16 +262,14 @@ export default function PalaceCell({ palace, monthZhi, zhongGongGan, isZhiFuOrig
             </div>
           )}
           {/* 右列：门+地盘干 */}
-          <div className="flex flex-col items-center gap-[1px]">
-            <div className="flex items-center gap-1">
-              <span
-                className={`text-[10px] sm:text-xs font-medium cursor-pointer hover:underline ${menColor(palace.baMen)}`}
-                onClick={() => showMenDetail(palace.baMen)}
-              >{palace.baMen}</span>
-              <span className={`text-[10px] sm:text-xs ${ganColor(palace.diPanGan)}`}>
-                {palace.diPanGan}
-              </span>
-            </div>
+          <div className="flex items-center gap-1">
+            <span
+              className={`text-[10px] sm:text-xs font-medium cursor-pointer hover:underline ${menColor(palace.baMen)}`}
+              onClick={() => showMenDetail(palace.baMen)}
+            >{palace.baMen}</span>
+            <span className={`text-[10px] sm:text-xs ${ganColor(palace.diPanGan)}`}>
+              {palace.diPanGan}
+            </span>
           </div>
         </div>
 
