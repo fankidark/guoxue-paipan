@@ -204,15 +204,14 @@ export default function PalaceCell({ palace, monthZhi, zhongGongGan, isZhiFuOrig
 
       {/* 主内容区 — 固定列宽精确对齐 */}
       <div className="flex flex-col items-center pt-3.5 sm:pt-4 pb-2.5 sm:pb-3 w-full px-0.5">
-        {/* 统一grid容器：所有行共享列宽 */}
-        <div className="grid grid-cols-[16px_1fr_1fr] sm:grid-cols-[20px_1fr_1fr] w-full gap-y-0 items-center">
-          {/* ─── 八神行（对齐九星列） ─── */}
+        {/* 统一grid容器：所有行共享列宽，整体居中 */}
+        <div className="grid grid-cols-[16px_auto_auto] sm:grid-cols-[20px_auto_auto] w-full gap-y-0 items-center justify-center">
+          {/* ─── 八神行（居中） ─── */}
           <span />
           <span
-            className={`text-[10px] sm:text-xs font-medium cursor-pointer hover:underline text-center ${shenColor(palace.baShen)}`}
+            className={`text-[10px] sm:text-xs font-medium cursor-pointer hover:underline text-center col-span-2 ${shenColor(palace.baShen)}`}
             onClick={() => showShenDetail(palace.baShen)}
           >{palace.baShen}</span>
-          <span />
           {/* ─── 九星行 ─── */}
           <span className="text-right pr-0.5">
             {zhongGongGan && isZhiFuOrig && (
