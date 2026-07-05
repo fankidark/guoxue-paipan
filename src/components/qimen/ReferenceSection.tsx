@@ -224,21 +224,75 @@ export default function ReferenceSection() {
         </div>
       </div>
 
-      {/* 五行速查 */}
+      {/* 五行相生相克图 */}
       <div className="card">
-        <h3 className="text-sm text-dark-400 font-medium mb-3">五行相生相克速查</h3>
-        <div className="space-y-3">
+        <h3 className="text-sm text-dark-400 font-medium mb-3">五行相生相克</h3>
+        <div className="flex justify-center">
+          <svg viewBox="0 0 200 200" className="w-48 h-48 sm:w-56 sm:h-56">
+            {/* 五行位置（五角形）：火上、木左、水左下、金右下、土右 */}
+            {/* 角度：火=270°(上), 木=198°, 水=126°, 金=54°, 土=342° → 调整为标准五行图 */}
+            {/* 正确顺序(相生顺时针)：火(top)→土(右上)→金(右下)→水(左下)→木(左) */}
+            {(() => {
+              const cx = 100, cy = 100, r = 70
+              // 五行位置（顺时针从顶部：火→土→金→水→木）
+              const elements = [
+                { name: '火', color: '#f87171', angle: -90 },   // top
+                { name: '土', color: '#d97706', angle: -18 },   // right-top
+                { name: '金', color: '#facc15', angle: 54 },    // right-bottom
+                { name: '水', color: '#60a5fa', angle: 126 },   // left-bottom
+                { name: '木', color: '#4ade80', angle: 198 },   // left
+              ]
+              const pts = elements.map(e => ({
+                ...e,
+                x: cx + r * Math.cos(e.angle * Math.PI / 180),
+                y: cy + r * Math.sin(e.angle * Math.PI / 180),
+              }))
+              
+              return (
+                <>
+                  {/* 相生线（绿色，顺时针外圈弧线用直线代替） */}
+                  {[0,1,2,3,4].map(i => {
+                    const from = pts[i], to = pts[(i+1)%5]
+                    const mx = (from.x + to.x) / 2 + (to.y - from.y) * 0.15
+                    const my = (from.y + to.y) / 2 - (to.x - from.x) * 0.15
+                    return <path key={`sheng${i}`} d={`M${from.x},${from.y} Q${mx},${my} ${to.x},${to.y}`} fill="none" stroke="#22c55e" strokeWidth="1.2" opacity="0.7" markerEnd="url(#arrowGreen)" />
+                  })}
+                  {/* 相克线（红色，五角星内线） */}
+                  {[0,1,2,3,4].map(i => {
+                    const from = pts[i], to = pts[(i+2)%5]
+                    return <line key={`ke${i}`} x1={from.x} y1={from.y} x2={to.x} y2={to.y} stroke="#ef4444" strokeWidth="1" opacity="0.5" strokeDasharray="3,2" />
+                  })}
+                  {/* 五行圆点+文字 */}
+                  {pts.map((p, i) => (
+                    <g key={i}>
+                      <circle cx={p.x} cy={p.y} r="16" fill={p.color} opacity="0.2" />
+                      <circle cx={p.x} cy={p.y} r="16" fill="none" stroke={p.color} strokeWidth="1.5" opacity="0.8" />
+                      <text x={p.x} y={p.y + 5} textAnchor="middle" fill={p.color} fontSize="13" fontWeight="bold">{p.name}</text>
+                    </g>
+                  ))}
+                  {/* 箭头标记 */}
+                  <defs>
+                    <marker id="arrowGreen" markerWidth="6" markerHeight="6" refX="5" refY="3" orient="auto">
+                      <path d="M0,0 L6,3 L0,6" fill="none" stroke="#22c55e" strokeWidth="1" />
+                    </marker>
+                  </defs>
+                </>
+              )
+            })()}
+          </svg>
+        </div>
+        {/* 图例 */}
+        <div className="flex justify-center gap-4 mt-2 text-[10px] sm:text-xs">
+          <span className="flex items-center gap-1"><span className="w-4 h-0.5 bg-green-500 inline-block rounded" /> <span className="text-green-400">相生</span> <span className="text-dark-500">（生我为母，我生为子）</span></span>
+          <span className="flex items-center gap-1"><span className="w-4 h-0.5 bg-red-500 inline-block rounded border-dashed" style={{borderTop:'1px dashed #ef4444', height:0}} /> <span className="text-red-400">相克</span> <span className="text-dark-500">（克我为官，我克为财）</span></span>
+        </div>
+        {/* 文字补充 */}
+        <div className="grid grid-cols-2 gap-2 mt-3 text-[10px] sm:text-xs text-dark-400">
           <div>
-            <div className="text-xs text-dark-300 font-medium mb-1.5">五行相生（生我者为母，我生者为子）</div>
-            <div className="text-xs text-dark-400 leading-relaxed">
-              <span className="text-green-400">木</span> → <span className="text-red-400">火</span> → <span className="text-amber-600">土</span> → <span className="text-yellow-400">金</span> → <span className="text-blue-400">水</span> → <span className="text-green-400">木</span>
-            </div>
+            <span className="text-green-400 font-medium">相生→</span> 木生火 · 火生土 · 土生金 · 金生水 · 水生木
           </div>
           <div>
-            <div className="text-xs text-dark-300 font-medium mb-1.5">五行相克（克我者为官，我克者为财）</div>
-            <div className="text-xs text-dark-400 leading-relaxed">
-              <span className="text-green-400">木</span> → <span className="text-amber-600">土</span> → <span className="text-blue-400">水</span> → <span className="text-red-400">火</span> → <span className="text-yellow-400">金</span> → <span className="text-green-400">木</span>
-            </div>
+            <span className="text-red-400 font-medium">相克→</span> 木克土 · 土克水 · 水克火 · 火克金 · 金克木
           </div>
         </div>
       </div>
