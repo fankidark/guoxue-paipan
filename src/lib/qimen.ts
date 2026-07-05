@@ -335,7 +335,7 @@ export function calculateQimen(date?: Date): QimenResult {
       if (zhiShiDestGong > 9) zhiShiDestGong = 1
     } else {
       zhiShiDestGong = zhiShiDestGong - 1
-      if (zhiShiDestGong === 5) zhiShiDestGong = 4
+      if (zhiShiDestGong === 5) zhiShiDestGong = 2  // 中宫寄坤
       if (zhiShiDestGong < 1) zhiShiDestGong = 9
     }
   }
