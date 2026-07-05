@@ -247,9 +247,9 @@ export default function PalaceCell({ palace, monthZhi, zhongGongGan, isZhiFuOrig
           )}
         </div>
 
-        {/* 八门 + 地盘干 + 目标宫壬在门行左侧 / 原宫两列对齐布局 */}
-        {zhongGongGan && isZhiFuOrig ? (
-          /* 原宫：壬/衰病(左列) | 门干/旺衰(右列) 两列对齐 */
+        {/* 八门 + 地盘干 + 壬两列对齐布局（原宫和目标宫都适用） */}
+        {zhongGongGan && (isZhiFuOrig || isZhiFuDest) ? (
+          /* 壬/旺衰(左列) | 门干/旺衰(右列) 两列对齐 */
           <div className="flex items-start gap-2 sm:gap-3 mt-0.5 sm:mt-1">
             {/* 左列：壬 + 旺衰 */}
             <div className="flex flex-col items-center gap-[1px]">
@@ -287,12 +287,9 @@ export default function PalaceCell({ palace, monthZhi, zhongGongGan, isZhiFuOrig
             </div>
           </div>
         ) : (
-          /* 普通宫 + 目标宫：壬在门行左侧 */
+          /* 普通宫：无壬 */
           <>
             <div className="flex items-center gap-1 sm:gap-1.5 mt-0.5 sm:mt-1">
-              {zhongGongGan && isZhiFuDest && (
-                <span className="text-[10px] sm:text-xs text-blue-400 font-bold">{zhongGongGan}</span>
-              )}
               <span
                 className={`text-[10px] sm:text-xs font-medium cursor-pointer hover:underline ${menColor(palace.baMen)}`}
                 onClick={() => showMenDetail(palace.baMen)}
@@ -302,7 +299,7 @@ export default function PalaceCell({ palace, monthZhi, zhongGongGan, isZhiFuOrig
               </span>
             </div>
 
-            {/* 八门旺衰(可点击) + 门迫(可点击) + 十二长生(含刑，均可点击) */}
+            {/* 八门旺衰 */}
             <div className="flex items-center gap-0.5 sm:gap-1 text-[9px] sm:text-[10px]">
               <span className="text-dark-500">
                 {menPo
