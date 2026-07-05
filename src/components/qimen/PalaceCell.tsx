@@ -247,45 +247,81 @@ export default function PalaceCell({ palace, monthZhi, zhongGongGan, isZhiFuOrig
           )}
         </div>
 
-        {/* 八门 + 地盘干 + 目标宫壬在门行左侧 */}
-        <div className="flex items-center gap-1 sm:gap-1.5 mt-0.5 sm:mt-1">
-          {/* 目标宫壬在门行左侧 */}
-          {zhongGongGan && isZhiFuDest && (
-            <span className="text-[10px] sm:text-xs text-blue-400 font-bold">{zhongGongGan}</span>
-          )}
-          {/* 门+地盘干 */}
-          <span
-            className={`text-[10px] sm:text-xs font-medium cursor-pointer hover:underline ${menColor(palace.baMen)}`}
-            onClick={() => showMenDetail(palace.baMen)}
-          >{palace.baMen}</span>
-          <span className={`text-[10px] sm:text-xs ${ganColor(palace.diPanGan)}`}>
-            {palace.diPanGan}
-          </span>
-        </div>
-
-        {/* 八门旺衰(可点击) + 门迫(可点击) + 十二长生(含刑，均可点击) */}
-        <div className="flex items-center gap-0.5 sm:gap-1 text-[9px] sm:text-[10px]">
-          <span className="text-dark-500">
-            {menPo
-              ? <span className="text-pink-400 cursor-pointer hover:underline" onClick={() => showSpecialDetail('迫')}>迫</span>
-              : <span className="cursor-pointer hover:text-dark-300" onClick={() => showWsDetail(menStatus.gongWs)}>{menStatus.gongWs}</span>
-            }
-            <span className="cursor-pointer hover:text-dark-300" onClick={() => showWsDetail(menStatus.monthWs)}>月{menStatus.monthWs}</span>
-          </span>
-          {(diXing || diTwelve) && (
-            <span className="text-amber-500/70">
-              {diXing ? (
+        {/* 八门 + 地盘干 + 目标宫壬在门行左侧 / 原宫两列对齐布局 */}
+        {zhongGongGan && isZhiFuOrig ? (
+          /* 原宫：壬/衰病(左列) | 门干/旺衰(右列) 两列对齐 */
+          <div className="flex items-start gap-2 sm:gap-3 mt-0.5 sm:mt-1">
+            {/* 左列：壬 + 旺衰 */}
+            <div className="flex flex-col items-center gap-[1px]">
+              <span className="text-[10px] sm:text-xs text-blue-400 font-bold">{zhongGongGan}</span>
+              <span className="text-[9px] sm:text-[10px] text-amber-500/70">{getGanTwelveInGongDouble(zhongGongGan, gongNum)}</span>
+            </div>
+            {/* 右列：门+干 + 旺衰 */}
+            <div className="flex flex-col items-center gap-[1px]">
+              <div className="flex items-center gap-1">
                 <span
-                  className="text-pink-400 cursor-pointer hover:underline"
-                  onClick={() => showSpecialDetail('刑')}
-                >刑</span>
-              ) : ''}
-              {diTwelve.split('').map((ch, i) => (
-                <span key={i} className="cursor-pointer hover:underline" onClick={() => showTwelveDetail(ch)}>{ch}</span>
-              ))}
-            </span>
-          )}
-        </div>
+                  className={`text-[10px] sm:text-xs font-medium cursor-pointer hover:underline ${menColor(palace.baMen)}`}
+                  onClick={() => showMenDetail(palace.baMen)}
+                >{palace.baMen}</span>
+                <span className={`text-[10px] sm:text-xs ${ganColor(palace.diPanGan)}`}>
+                  {palace.diPanGan}
+                </span>
+              </div>
+              <div className="flex items-center gap-0.5 text-[9px] sm:text-[10px]">
+                <span className="text-dark-500">
+                  {menPo
+                    ? <span className="text-pink-400 cursor-pointer hover:underline" onClick={() => showSpecialDetail('迫')}>迫</span>
+                    : <span className="cursor-pointer hover:text-dark-300" onClick={() => showWsDetail(menStatus.gongWs)}>{menStatus.gongWs}</span>
+                  }
+                  <span className="cursor-pointer hover:text-dark-300" onClick={() => showWsDetail(menStatus.monthWs)}>月{menStatus.monthWs}</span>
+                </span>
+                {(diXing || diTwelve) && (
+                  <span className="text-amber-500/70">
+                    {diXing ? <span className="text-pink-400 cursor-pointer hover:underline" onClick={() => showSpecialDetail('刑')}>刑</span> : ''}
+                    {diTwelve.split('').map((ch: string, i: number) => (
+                      <span key={i} className="cursor-pointer hover:underline" onClick={() => showTwelveDetail(ch)}>{ch}</span>
+                    ))}
+                  </span>
+                )}
+              </div>
+            </div>
+          </div>
+        ) : (
+          /* 普通宫 + 目标宫：壬在门行左侧 */
+          <>
+            <div className="flex items-center gap-1 sm:gap-1.5 mt-0.5 sm:mt-1">
+              {zhongGongGan && isZhiFuDest && (
+                <span className="text-[10px] sm:text-xs text-blue-400 font-bold">{zhongGongGan}</span>
+              )}
+              <span
+                className={`text-[10px] sm:text-xs font-medium cursor-pointer hover:underline ${menColor(palace.baMen)}`}
+                onClick={() => showMenDetail(palace.baMen)}
+              >{palace.baMen}</span>
+              <span className={`text-[10px] sm:text-xs ${ganColor(palace.diPanGan)}`}>
+                {palace.diPanGan}
+              </span>
+            </div>
+
+            {/* 八门旺衰(可点击) + 门迫(可点击) + 十二长生(含刑，均可点击) */}
+            <div className="flex items-center gap-0.5 sm:gap-1 text-[9px] sm:text-[10px]">
+              <span className="text-dark-500">
+                {menPo
+                  ? <span className="text-pink-400 cursor-pointer hover:underline" onClick={() => showSpecialDetail('迫')}>迫</span>
+                  : <span className="cursor-pointer hover:text-dark-300" onClick={() => showWsDetail(menStatus.gongWs)}>{menStatus.gongWs}</span>
+                }
+                <span className="cursor-pointer hover:text-dark-300" onClick={() => showWsDetail(menStatus.monthWs)}>月{menStatus.monthWs}</span>
+              </span>
+              {(diXing || diTwelve) && (
+                <span className="text-amber-500/70">
+                  {diXing ? (<span className="text-pink-400 cursor-pointer hover:underline" onClick={() => showSpecialDetail('刑')}>刑</span>) : ''}
+                  {diTwelve.split('').map((ch: string, i: number) => (
+                    <span key={i} className="cursor-pointer hover:underline" onClick={() => showTwelveDetail(ch)}>{ch}</span>
+                  ))}
+                </span>
+              )}
+            </div>
+          </>
+        )}
 
         {/* 格局标记 */}
         {geJu.length > 0 && (
