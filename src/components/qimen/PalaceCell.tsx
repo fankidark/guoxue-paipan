@@ -172,7 +172,7 @@ export default function PalaceCell({ palace, monthZhi, zhongGongGan, isZhiFuOrig
 
   return (
     /* 响应式：小屏 min-h-[120px]，大屏 min-h-[160px]；字体在小屏更紧凑 */
-    <div className={`bg-dark-800/40 border rounded-lg p-1.5 sm:p-2.5 min-h-[120px] sm:min-h-[160px] relative flex flex-col justify-between ${(isZhiFuOrig || isZhiFuDest) ? 'border-red-500/60 ring-1 ring-red-500/30' : 'border-dark-700/30'}`}>
+    <div className={`bg-dark-800/40 border border-dark-700/30 rounded-lg p-1.5 sm:p-2.5 min-h-[120px] sm:min-h-[160px] relative flex flex-col justify-between`}>
       {/* 左上角：卦名 */}
       <span className={`absolute top-1 sm:top-1.5 left-1.5 sm:left-2 text-[10px] sm:text-[11px] font-bold ${gColor}`}>
         {guaName}
@@ -198,7 +198,7 @@ export default function PalaceCell({ palace, monthZhi, zhongGongGan, isZhiFuOrig
       <span className={`absolute bottom-1 sm:bottom-1.5 left-1.5 sm:left-2 text-xs sm:text-sm font-bold ${gColor}`}>
         {gongNum}
         {zhongGongGan && gongNum === 2 && (
-          <span className="ml-0.5 text-[9px] sm:text-[10px] text-blue-400 font-normal">{zhongGongGan}</span>
+          <span className={`ml-0.5 text-[9px] sm:text-[10px] font-normal ${ganColor(zhongGongGan)}`}>{zhongGongGan}</span>
         )}
       </span>
 
@@ -213,7 +213,7 @@ export default function PalaceCell({ palace, monthZhi, zhongGongGan, isZhiFuOrig
         {/* 九星 + 天盘干 + 原宫中宫壬(星行左侧) */}
         <div className="flex items-center gap-1 sm:gap-1.5">
           {zhongGongGan && isZhiFuOrig && (
-            <span className="text-[10px] sm:text-xs text-blue-400 font-bold">{zhongGongGan}</span>
+            <span className={`text-[10px] sm:text-xs font-bold ${ganColor(zhongGongGan)}`}>{zhongGongGan}</span>
           )}
           <span
             className={`text-[10px] sm:text-xs cursor-pointer hover:underline ${xingColor(palace.jiuXing)}`}
