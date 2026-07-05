@@ -2,6 +2,8 @@ import { useState, useEffect, useMemo } from 'react'
 import { MOD_BASICS } from '../data/knowledge/mod-basics'
 import { MOD_PAIPAN } from '../data/knowledge/mod-paipan'
 import { MOD_GEJU } from '../data/knowledge/mod-geju'
+import { MOD_DUANJU } from '../data/knowledge/mod-duanju'
+import { MOD_SHIZHAN } from '../data/knowledge/mod-shizhan'
 import { registerModule, searchKnowledge, getModules } from '../data/knowledge/search'
 import type { KnowledgeEntry, KnowledgeChapter, KnowledgeModule, SearchResult } from '../data/knowledge/types'
 
@@ -9,6 +11,8 @@ import type { KnowledgeEntry, KnowledgeChapter, KnowledgeModule, SearchResult } 
 registerModule(MOD_BASICS)
 registerModule(MOD_PAIPAN)
 registerModule(MOD_GEJU)
+registerModule(MOD_DUANJU)
+registerModule(MOD_SHIZHAN)
 
 // 五行颜色
 const WX_COLOR: Record<string, string> = {
