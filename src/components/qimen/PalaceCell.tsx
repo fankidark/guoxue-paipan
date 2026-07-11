@@ -14,6 +14,7 @@ import {
   XING_DETAIL, MEN_DETAIL, SHEN_DETAIL,
   SPECIAL_DETAIL, WANGSHUAI_DETAIL, TWELVE_DETAIL, GEJU_DETAIL,
 } from '../../lib/qimen-details'
+import { getShiganKeying, getMenGanKeying } from '../../lib/keying-data'
 
 // ============================================================================
 // 五行颜色工具
@@ -170,6 +171,46 @@ export default function PalaceCell({ palace, monthZhi, zhongGongGan, isZhiFuOrig
   // ── 格局标记（来自 palace.geJu） ──
   const geJu = palace.geJu ?? []
 
+  // ── 本宫克应（十干克应 + 门干克应） ──
+  const showKeying = () => {
+    const sg = getShiganKeying(palace.tianPanGan, palace.diPanGan)
+    const mg = getMenGanKeying(palace.baMen, palace.diPanGan)
+    showDetail(`${guaName}${gongNum}宫 · 克应`, (
+      <div className="space-y-3">
+        {/* 十干克应 */}
+        <div>
+          <div className="flex items-center gap-2 mb-1">
+            <span className="text-[10px] px-1.5 py-0.5 rounded bg-purple-900/40 text-purple-300">十干克应</span>
+            <span className="text-xs font-bold text-dark-100">
+              {palace.tianPanGan}+{palace.diPanGan}
+              {sg?.geju && <span className="ml-1.5 text-purple-400">{sg.geju}</span>}
+            </span>
+          </div>
+          {sg ? (
+            <div className="text-xs text-dark-300 leading-relaxed whitespace-pre-wrap max-h-56 overflow-y-auto border-l-2 border-purple-500/40 pl-2">
+              {sg.text}
+            </div>
+          ) : (
+            <div className="text-xs text-dark-500">无此组合断语（天盘{palace.tianPanGan} + 地盘{palace.diPanGan}）</div>
+          )}
+        </div>
+        {/* 门干克应 */}
+        <div>
+          <div className="flex items-center gap-2 mb-1">
+            <span className="text-[10px] px-1.5 py-0.5 rounded bg-blue-900/40 text-blue-300">门干克应</span>
+            <span className="text-xs font-bold text-dark-100">{palace.baMen}+{palace.diPanGan}</span>
+          </div>
+          {mg ? (
+            <div className="text-xs text-dark-300 leading-relaxed border-l-2 border-blue-500/40 pl-2">{mg}</div>
+          ) : (
+            <div className="text-xs text-dark-500">无此组合断语</div>
+          )}
+        </div>
+        <div className="text-[9px] text-dark-600">断语来自《奇门遁甲内部学习资料》原文 · 完整81组见知识库「克应断语」模块</div>
+      </div>
+    ))
+  }
+
   return (
     /* 响应式：小屏 min-h-[120px]，大屏 min-h-[160px]；字体在小屏更紧凑 */
     <div className={`bg-dark-800/40 border border-dark-700/30 rounded-lg p-1.5 sm:p-2.5 min-h-[120px] sm:min-h-[160px] relative flex flex-col justify-between`}>
@@ -201,6 +242,13 @@ export default function PalaceCell({ palace, monthZhi, zhongGongGan, isZhiFuOrig
           <span className={`ml-0.5 text-[9px] sm:text-[10px] font-normal ${ganColor(zhongGongGan)}`}>{zhongGongGan}</span>
         )}
       </span>
+
+      {/* 右下角：克应查看按钮 */}
+      <span
+        className="absolute bottom-1 sm:bottom-1.5 right-1.5 sm:right-2 text-[9px] sm:text-[10px] px-1 rounded bg-dark-700/50 text-dark-400 cursor-pointer hover:bg-purple-900/50 hover:text-purple-300 transition-colors"
+        onClick={showKeying}
+        title="查看本宫克应断语"
+      >应</span>
 
       {/* 主内容区 — 固定列宽精确对齐 */}
       <div className="flex flex-col items-center pt-3.5 sm:pt-4 pb-2.5 sm:pb-3 w-full px-0.5">
