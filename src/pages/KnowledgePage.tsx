@@ -4,6 +4,7 @@ import { MOD_PAIPAN } from '../data/knowledge/mod-paipan'
 import { MOD_GEJU } from '../data/knowledge/mod-geju'
 import { MOD_DUANJU } from '../data/knowledge/mod-duanju'
 import { MOD_SHIZHAN } from '../data/knowledge/mod-shizhan'
+import { MOD_KEYING } from '../data/knowledge/mod-keying'
 import { registerModule, searchKnowledge, getModules, getEntryByTitle, getBacklinks } from '../data/knowledge/search'
 import { SUBJECTS } from '../data/knowledge/types'
 import type { KnowledgeEntry, SubjectId } from '../data/knowledge/types'
@@ -13,6 +14,7 @@ registerModule(MOD_BASICS)
 registerModule(MOD_PAIPAN)
 registerModule(MOD_GEJU)
 registerModule(MOD_DUANJU)
+registerModule(MOD_KEYING)
 registerModule(MOD_SHIZHAN)
 
 const TAG_COLORS: Record<string, string> = {
