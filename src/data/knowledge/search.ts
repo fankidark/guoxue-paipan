@@ -119,3 +119,44 @@ export function getAllTags(): string[] {
   }
   return Array.from(tagSet).sort()
 }
+
+/**
+ * 按标题查找条目（wiki link [[标题]] 解析用）
+ * 支持别名：标题精确匹配 > 标题包含
+ */
+export function getEntryByTitle(title: string): { entry: KnowledgeEntry; chapter: KnowledgeChapter; module: KnowledgeModule } | null {
+  const t = title.trim()
+  let fuzzy: { entry: KnowledgeEntry; chapter: KnowledgeChapter; module: KnowledgeModule } | null = null
+  for (const mod of modules) {
+    for (const chap of mod.chapters) {
+      for (const entry of chap.entries) {
+        if (entry.title === t) return { entry, chapter: chap, module: mod }
+        if (!fuzzy && (entry.title.includes(t) || t.includes(entry.title))) {
+          fuzzy = { entry, chapter: chap, module: mod }
+        }
+      }
+    }
+  }
+  return fuzzy
+}
+
+/**
+ * 反向链接：找出所有正文中 [[引用]] 了目标条目的条目（Obsidian backlinks）
+ */
+export function getBacklinks(target: KnowledgeEntry): { entry: KnowledgeEntry; chapter: KnowledgeChapter; module: KnowledgeModule }[] {
+  const results: { entry: KnowledgeEntry; chapter: KnowledgeChapter; module: KnowledgeModule }[] = []
+  for (const mod of modules) {
+    for (const chap of mod.chapters) {
+      for (const entry of chap.entries) {
+        if (entry.id === target.id) continue
+        // [[title]] 或 [[title|display]] 引用，或 terms 显式引用
+        const linkRe = new RegExp(`\\[\\[${target.title.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}(\\|[^\\]]*)?\\]\\]`)
+        const hasWiki = linkRe.test(entry.content)
+        const hasTerm = entry.terms?.some(tr => tr.term === target.title)
+        if (hasWiki || hasTerm) results.push({ entry, chapter: chap, module: mod })
+        if (results.length >= 12) return results
+      }
+    }
+  }
+  return results
+}

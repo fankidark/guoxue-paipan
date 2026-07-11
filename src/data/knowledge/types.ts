@@ -34,11 +34,28 @@ export interface KnowledgeChapter {
   entries: KnowledgeEntry[]
 }
 
+// 学科（顶层分类）
+export type SubjectId = 'qimen' | 'bazi' | 'meihua'
+
+export interface Subject {
+  id: SubjectId
+  title: string
+  icon: string
+  ready: boolean          // 是否已有内容
+}
+
+export const SUBJECTS: Subject[] = [
+  { id: 'qimen', title: '奇门遁甲', icon: '⚝', ready: true },
+  { id: 'bazi', title: '八字命理', icon: '🀄', ready: false },
+  { id: 'meihua', title: '梅花易数', icon: '🌸', ready: false },
+]
+
 // 模块
 export interface KnowledgeModule {
   id: string              // 如 "basics"
   title: string           // 如 "基础知识"
   icon: string            // emoji图标
+  subject?: SubjectId     // 所属学科，默认 qimen
   chapters: KnowledgeChapter[]
 }
 
