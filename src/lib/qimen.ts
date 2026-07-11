@@ -449,65 +449,73 @@ export function calculateQimen(date?: Date): QimenResult {
   // 全局格局（三奇得使等）
   const globalGeJu: string[] = []
 
-  // 判断各宫格局
+  // 判断各宫格局（十干克应命名严格按教材《十干克应》）
+  const yearGan = yearGZ[0]
+  const monthGan = monthGZ[0]
+  const dayGan = dayGZ[0]
+  // hourGan 已在上文声明
+
   for (const p of palaces) {
     const geJuList: string[] = []
     const tian = p.tianPanGan
     const di = p.diPanGan
 
-    // 1. 乙+庚同宫：日奇伏吟（天盘乙，地盘庚）
-    if (tian === '乙' && di === '庚') {
-      geJuList.push('日奇伏吟')
+    // — 乙庚系 —
+    if (tian === '乙' && di === '乙') geJuList.push('日奇伏吟')
+    if (tian === '乙' && di === '庚') geJuList.push('日奇被刑')
+    if (tian === '庚' && di === '乙') geJuList.push('太白逢星')
+
+    // — 丙庚系 —
+    if (tian === '丙' && di === '庚') geJuList.push('荧入太白')
+    if (tian === '庚' && di === '丙') geJuList.push('太白入荧')
+
+    // — 丁庚：星奇受阻 —
+    if (tian === '丁' && di === '庚') geJuList.push('星奇受阻')
+
+    // — 六庚诸格（天盘庚加地盘干） —
+    if (tian === '庚') {
+      if (di === '戊') geJuList.push('天乙伏宫')
+      if (di === '己') geJuList.push('刑格')
+      if (di === '庚') geJuList.push('战格')
+      if (di === '壬') geJuList.push('小格')
+      if (di === '癸') geJuList.push('大格')
+      // 庚格：六庚加年/月/日/时干 → 岁格/月格/伏干格(日格)/时格
+      if (di === yearGan) geJuList.push('岁格')
+      if (di === monthGan) geJuList.push('月格')
+      if (di === dayGan) geJuList.push('伏干格')
+      if (di === hourGan) geJuList.push('时格')
+    }
+    // 飞干格：地盘庚被天盘日干加临（日干+庚）
+    if (di === '庚' && tian === dayGan && dayGan !== '庚') {
+      geJuList.push('飞干格')
     }
 
-    // 2. 丙+庚同宫：火入金乡（天盘丙，地盘庚）
-    if (tian === '丙' && di === '庚') {
-      geJuList.push('火入金乡')
-    }
-
-    // 3. 丁+庚同宫：天三门（天盘丁，地盘庚）
-    if (tian === '丁' && di === '庚') {
-      geJuList.push('天三门')
-    }
-
-    // 4. 天盘干克地盘干：奇仪相克
+    // 奇仪相克：天盘干克地盘干
     const tianWx = GAN_WX[tian]
     const diWx = GAN_WX[di]
     if (tianWx && diWx && WX_KE[tianWx] === diWx && tian !== di) {
       geJuList.push('奇仪相克')
     }
 
-    // 5. 庚落值符宫：庚格（地盘庚在值符目标宫）
-    if (p.gongNumber === zhiFuDestGong && (tian === '庚' || di === '庚')) {
-      geJuList.push('庚格')
-    }
-
     p.geJu = geJuList
   }
 
-  // === 三奇得使判断（乙丙丁同时出现在值使门、值符宫等关键位置）===
-  // 简化实现：三奇（乙丙丁）均出现在天盘时，判断三奇得使格局
-  const tianPanGans = Object.values(tianPan)
-  const hasYi = tianPanGans.includes('乙')
-  const hasBing = tianPanGans.includes('丙')
-  const hasDing = tianPanGans.includes('丁')
-  if (hasYi && hasBing && hasDing) {
-    // 天遁：丙+天辅+生门同宫
-    // 地遁：乙+六合+开门同宫
-    // 人遁：丁+太阴+休门同宫
-    for (const p of palaces) {
-      if (p.tianPanGan === '丙' && p.jiuXing === '天辅' && p.baMen === '生门') {
-        globalGeJu.push('天遁')
-        p.geJu = [...(p.geJu || []), '天遁']
-      }
-      if (p.tianPanGan === '乙' && p.baShen === '六合' && p.baMen === '开门') {
-        globalGeJu.push('地遁')
-        p.geJu = [...(p.geJu || []), '地遁']
-      }
-      if (p.tianPanGan === '丁' && p.baShen === '太阴' && p.baMen === '休门') {
-        globalGeJu.push('人遁')
-        p.geJu = [...(p.geJu || []), '人遁']
-      }
+  // === 三遁判断（按教材《奇门吉格》正文定义） ===
+  // 天遁：丙奇+生门 临地盘丁（丙+丁）
+  // 地遁：乙奇+开门 临地盘己（乙+己）
+  // 人遁：丁奇+休门 合太阴
+  for (const p of palaces) {
+    if (p.tianPanGan === '丙' && p.baMen === '生门' && p.diPanGan === '丁') {
+      globalGeJu.push('天遁')
+      p.geJu = [...(p.geJu || []), '天遁']
+    }
+    if (p.tianPanGan === '乙' && p.baMen === '开门' && p.diPanGan === '己') {
+      globalGeJu.push('地遁')
+      p.geJu = [...(p.geJu || []), '地遁']
+    }
+    if (p.tianPanGan === '丁' && p.baMen === '休门' && p.baShen === '太阴') {
+      globalGeJu.push('人遁')
+      p.geJu = [...(p.geJu || []), '人遁']
     }
   }
 

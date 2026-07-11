@@ -54,14 +54,25 @@ const GAN_WX: Record<string, string> = {
   '己': '土', '庚': '金', '辛': '金', '壬': '水', '癸': '水'
 }
 
-// 八门落宫旺衰表：同行=旺, 令(宫)生我(门)=相, 我(门)生令(宫)=休, 我克令=迫, 令克我=死
+// 八门落宫旺衰表：同行=旺, 令(宫)生我(门)=相, 我(门)生令(宫)=休, 我克令=迫(门迫), 令克我=死
 // key=宫位五行, value中key=门五行→状态
+// 验证: 2026-07-05 阴遁九局对照App — 杜门(木)落艮8(土)=迫, 死门(土)落巽4(木)=死
 const WANGSHUAI_MEN: Record<string, Record<string, string>> = {
-  '木': { '木': '旺', '火': '相', '水': '休', '土': '迫', '金': '死' },
+  '木': { '木': '旺', '火': '相', '水': '休', '金': '迫', '土': '死' },
   '火': { '火': '旺', '土': '相', '木': '休', '水': '迫', '金': '死' },
   '土': { '土': '旺', '金': '相', '火': '休', '木': '迫', '水': '死' },
   '金': { '金': '旺', '水': '相', '土': '休', '火': '迫', '木': '死' },
   '水': { '水': '旺', '木': '相', '金': '休', '土': '迫', '火': '死' },
+}
+
+// 八门月令旺衰表（标准五行旺衰）：当令=旺, 令生=相, 生令=休, 克令=囚, 令克=死
+// 月令维度无"门迫"概念。验证: 休门(水)午月(火)=囚(非迫), 惊门(金)午月=死
+const WANGSHUAI_MEN_MONTH: Record<string, Record<string, string>> = {
+  '木': { '木': '旺', '火': '相', '水': '休', '金': '囚', '土': '死' },
+  '火': { '火': '旺', '土': '相', '木': '休', '水': '囚', '金': '死' },
+  '土': { '土': '旺', '金': '相', '火': '休', '木': '囚', '水': '死' },
+  '金': { '金': '旺', '水': '相', '土': '休', '火': '囚', '木': '死' },
+  '水': { '水': '旺', '木': '相', '金': '休', '土': '囚', '火': '死' },
 }
 
 // 九星旺衰表：我生令=旺, 同行=相, 我克令=休, 令克我=囚, 令生我=废
@@ -79,7 +90,7 @@ const WANGSHUAI_XING: Record<string, Record<string, string>> = {
  */
 export function getWangShuai(wuxing: string, monthZhi: string): string {
   const monthWx = ZHI_WX[monthZhi] || '土'
-  return WANGSHUAI_MEN[monthWx]?.[wuxing] || '休'
+  return WANGSHUAI_MEN_MONTH[monthWx]?.[wuxing] || '休'
 }
 
 // 十二长生顺序
@@ -143,10 +154,10 @@ export function getMenStatus(menName: string, gongNum: number, monthZhi: string)
   const gongWx = GONG_WUXING[gongNum] || '土'
   const monthWx = ZHI_WX[monthZhi] || '土'
   
-  // 八门落宫旺衰（标准表，以宫位五行为"令"）
+  // 八门落宫旺衰（含门迫，以宫位五行为"令"）
   const gongWs = WANGSHUAI_MEN[gongWx]?.[menWx] || '休'
-  // 八门月令旺衰（标准表，以月令五行为"令"）
-  const monthWs = WANGSHUAI_MEN[monthWx]?.[menWx] || '休'
+  // 八门月令旺衰（标准五行旺衰，以月令五行为"令"，无门迫）
+  const monthWs = WANGSHUAI_MEN_MONTH[monthWx]?.[menWx] || '休'
   
   return { gongWs, monthWs }
 }
