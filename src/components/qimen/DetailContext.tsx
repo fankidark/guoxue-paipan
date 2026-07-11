@@ -1,6 +1,6 @@
 /**
  * 奇门遁甲详情弹窗 Context 系统
- * 替代原先的全局变量 globalShowDetail，使用 React Context 管理弹窗状态。
+ * 栈式弹窗：支持术语连续跳转 + 返回上一层继续查看
  */
 import { createContext, useContext, useState } from 'react'
 import type { ReactNode } from 'react'
@@ -15,7 +15,7 @@ interface DetailState {
   content: ReactNode
 }
 
-/** Context 值：提供 showDetail 方法 */
+/** Context 值 */
 interface DetailContextValue {
   showDetail: (title: string, content: ReactNode) => void
 }
@@ -29,18 +29,19 @@ const DetailContext = createContext<DetailContextValue>({
 })
 
 // ============================================================================
-// 弹窗 UI 组件
+// 弹窗 UI 组件（栈式：可返回上一层）
 // ============================================================================
 
 function DetailModal({
-  title,
-  content,
+  stack,
+  onBack,
   onClose,
 }: {
-  title: string
-  content: ReactNode
+  stack: DetailState[]
+  onBack: () => void
   onClose: () => void
 }) {
+  const current = stack[stack.length - 1]
   return (
     <div
       className="fixed inset-0 z-50 flex items-center justify-center p-4"
@@ -52,15 +53,30 @@ function DetailModal({
         onClick={(e) => e.stopPropagation()}
       >
         <div className="flex items-center justify-between mb-3">
-          <h3 className="text-base font-bold text-dark-100">{title}</h3>
+          <div className="flex items-center gap-2 min-w-0">
+            {stack.length > 1 && (
+              <button
+                onClick={onBack}
+                className="shrink-0 text-xs px-2 py-0.5 rounded bg-dark-800 text-dark-300 hover:bg-dark-700"
+              >
+                ← 返回
+              </button>
+            )}
+            <h3 className="text-base font-bold text-dark-100 truncate">{current.title}</h3>
+          </div>
           <button
             onClick={onClose}
-            className="text-dark-500 hover:text-dark-200 text-xl"
+            className="text-dark-500 hover:text-dark-200 text-xl shrink-0 ml-2"
           >
             ×
           </button>
         </div>
-        <div className="text-sm text-dark-300 space-y-3">{content}</div>
+        {stack.length > 1 && (
+          <div className="text-[9px] text-dark-500 mb-2 truncate">
+            {stack.map(s => s.title).join(' › ')}
+          </div>
+        )}
+        <div className="text-sm text-dark-300 space-y-3">{current.content}</div>
       </div>
     </div>
   )
@@ -71,20 +87,24 @@ function DetailModal({
 // ============================================================================
 
 export function DetailProvider({ children }: { children: ReactNode }) {
-  const [detail, setDetail] = useState<DetailState | null>(null)
+  const [stack, setStack] = useState<DetailState[]>([])
 
   const showDetail = (title: string, content: ReactNode) => {
-    setDetail({ title, content })
+    setStack(prev => {
+      // 同标题去重：已在栈顶则不重复压栈
+      if (prev.length > 0 && prev[prev.length - 1].title === title) return prev
+      return [...prev, { title, content }].slice(-10)
+    })
   }
 
   return (
     <DetailContext.Provider value={{ showDetail }}>
       {children}
-      {detail && (
+      {stack.length > 0 && (
         <DetailModal
-          title={detail.title}
-          content={detail.content}
-          onClose={() => setDetail(null)}
+          stack={stack}
+          onBack={() => setStack(prev => prev.slice(0, -1))}
+          onClose={() => setStack([])}
         />
       )}
     </DetailContext.Provider>
@@ -92,7 +112,7 @@ export function DetailProvider({ children }: { children: ReactNode }) {
 }
 
 // ============================================================================
-// Hook：在子组件中使用弹窗
+// Hook
 // ============================================================================
 
 /** 使用弹窗 Context，获取 showDetail 方法 */

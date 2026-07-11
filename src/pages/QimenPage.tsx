@@ -8,11 +8,12 @@
  * - 渲染信息栏、四柱、九宫格布局
  * - 子组件：DetailContext / PalaceCell / ReferenceSection / HistoryPanel
  */
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import { calculateQimen } from '../lib/qimen'
 import type { QimenResult } from '../lib/qimen'
 import { JIEQI_MONTH_ZHI } from '../lib/qimen-status'
 import { DetailProvider } from '../components/qimen/DetailContext'
+import QueryGuide from '../components/qimen/QueryGuide'
 import PalaceCell from '../components/qimen/PalaceCell'
 import ReferenceSection from '../components/qimen/ReferenceSection'
 import HistoryPanel from '../components/qimen/HistoryPanel'
@@ -91,8 +92,21 @@ function PillarCard({ label, value }: { label: string; value: string }) {
 // ============================================================================
 
 export default function QimenPage() {
-  const [datetime, setDatetime] = useState(formatDateTime(new Date()))
-  const [result, setResult] = useState<QimenResult | null>(null)
+  // 恢复上次排盘（缓存时间），无缓存则用当前时间；恢复时不写历史
+  const [datetime, setDatetime] = useState(() => {
+    try {
+      const last = localStorage.getItem('qimen_last_dt')
+      if (last && !isNaN(new Date(last).getTime())) return last
+    } catch {}
+    return formatDateTime(new Date())
+  })
+  const [result, setResult] = useState<QimenResult | null>(() => {
+    try {
+      const last = localStorage.getItem('qimen_last_dt')
+      const d = last && !isNaN(new Date(last).getTime()) ? new Date(last) : new Date()
+      return calculateQimen(d)
+    } catch { return null }
+  })
   const [history, setHistory] = useState<HistoryItem[]>(() => {
     try {
       const saved = localStorage.getItem('qimen_history')
@@ -115,10 +129,10 @@ export default function QimenPage() {
     const d = dt || new Date(datetime)
     const r = calculateQimen(d)
     setResult(r)
-    saveToHistory(formatDateTime(d), r)
+    const dtStr = formatDateTime(d)
+    try { localStorage.setItem('qimen_last_dt', dtStr) } catch {}
+    saveToHistory(dtStr, r)
   }
-
-  useEffect(() => { doPaipan(new Date()) }, [])
 
   const setNow = () => {
     const now = new Date()
@@ -169,6 +183,9 @@ export default function QimenPage() {
 
         {result && (
           <>
+            {/* 查什么 — 问事速查 */}
+            <QueryGuide />
+
             {/* 信息栏 */}
             <div className="card">
               <div className="flex flex-wrap gap-x-6 gap-y-2 text-sm">
