@@ -54,9 +54,12 @@ const KE: Record<string, string> = { '木': '土', '火': '金', '土': '水', '
 
 // 十二长生
 const TWELVE_STATES = ['长生', '沐浴', '冠带', '临官', '帝旺', '衰', '病', '死', '墓', '绝', '胎', '养']
+// 起点=长生所在地支的 DI_ZHI 索引。阳干顺行、阴干逆行
+// 甲长生亥(11) 丙戊长生寅(2) 庚长生巳(5) 壬长生申(8)
+// 乙长生午(6) 丁己长生酉(9) 辛长生子(0) 癸长生卯(3)
 const TWELVE_START: Record<string, number> = {
-  '甲': 0, '丙': 2, '戊': 2, '庚': 7, '壬': 9, // 阳干
-  '乙': 7, '丁': 9, '己': 9, '辛': 0, '癸': 2  // 阴干（逆行）
+  '甲': 11, '丙': 2, '戊': 2, '庚': 5, '壬': 8, // 阳干
+  '乙': 6, '丁': 9, '己': 9, '辛': 0, '癸': 3  // 阴干（逆行）
 }
 
 // ============================================================================
@@ -131,7 +134,8 @@ export interface Pillar {
     wuXing: string
     shiShen: string
   }>
-  twelveState: string     // 十二长生
+  twelveState: string     // 星运：日主在该支的十二长生
+  ziZuo: string           // 自坐：本柱天干在本支的十二长生
 }
 
 export interface DaYun {
@@ -158,6 +162,20 @@ export interface BaziResult {
   // 五行统计
   wuXingCount: Record<string, number>
   wuXingPower: Record<string, number>
+  
+  // 附加盘要素
+  yearXunKong: string     // 年旬空
+  dayXunKong: string      // 日旬空
+  taiYuan: string         // 胎元
+  taiYuanNaYin: string
+  mingGong: string        // 命宫
+  mingGongNaYin: string
+  shenGong: string        // 身宫
+  shenGongNaYin: string
+  taiXi: string           // 胎息
+  taiXiNaYin: string
+  prevJie: { name: string; date: string }  // 上一节气
+  nextJie: { name: string; date: string }  // 下一节气
   
   // 元数据
   startDaYunAge: number
@@ -204,7 +222,8 @@ export function calculateBazi(
         wuXing: GAN_WUXING[g],
         shiShen: getShiShen(dayGan, g)
       })),
-      twelveState: getTwelveState(dayGan, zhi)
+      twelveState: getTwelveState(dayGan, zhi),
+      ziZuo: getTwelveState(gan, zhi)
     }
   }
 
@@ -221,7 +240,7 @@ export function calculateBazi(
   allGans.forEach(g => { wuXingCount[GAN_WUXING[g]]++ })
   allZhis.forEach(z => { wuXingCount[ZHI_WUXING[z]]++ })
 
-  // 五行力量（含藏干权重）
+  // 五行力量（含藏干权重 + 月令旺相休囚死系数）
   const wuXingPower: Record<string, number> = { '木': 0, '火': 0, '土': 0, '金': 0, '水': 0 }
   allGans.forEach(g => { wuXingPower[GAN_WUXING[g]] += 10 })
   allZhis.forEach(z => {
@@ -229,9 +248,28 @@ export function calculateBazi(
     const weights = cg.length === 1 ? [10] : cg.length === 2 ? [7, 3] : [6, 3, 1]
     cg.forEach((g, i) => { wuXingPower[GAN_WUXING[g]] += weights[i] })
   })
+  // 月令季节系数：当令旺1.5 相1.1 休0.8 囚0.6 死0.5
+  const monthWx = ZHI_WUXING[monthGZ[1]]
+  const seasonCoef: Record<string, number> = {}
+  WU_XING.forEach(wx => {
+    if (wx === monthWx) seasonCoef[wx] = 1.5              // 旺
+    else if (SHENG[monthWx] === wx) seasonCoef[wx] = 1.1  // 相（令生我）
+    else if (SHENG[wx] === monthWx) seasonCoef[wx] = 0.8  // 休（我生令）
+    else if (KE[wx] === monthWx) seasonCoef[wx] = 0.6     // 囚（我克令）
+    else seasonCoef[wx] = 0.5                              // 死（令克我）
+  })
+  WU_XING.forEach(wx => { wuXingPower[wx] = Math.round(wuXingPower[wx] * seasonCoef[wx] * 10) / 10 })
 
   // 大运计算
   const daYun = calculateDaYun(eightChar, gender, year)
+
+  // 附加盘要素（lunar-javascript API）
+  const taiYuan = eightChar.getTaiYuan()
+  const mingGong = eightChar.getMingGong()
+  const shenGong = eightChar.getShenGong()
+  const taiXi = eightChar.getTaiXi ? eightChar.getTaiXi() : ''
+  const prevJieObj = lunar.getPrevJie()
+  const nextJieObj = lunar.getNextJie()
 
   return {
     year: yearPillar,
@@ -246,6 +284,18 @@ export function calculateBazi(
     daYun,
     wuXingCount,
     wuXingPower,
+    yearXunKong: eightChar.getYearXunKong(),
+    dayXunKong: eightChar.getDayXunKong(),
+    taiYuan,
+    taiYuanNaYin: NAYIN_TABLE[taiYuan] || '',
+    mingGong,
+    mingGongNaYin: NAYIN_TABLE[mingGong] || '',
+    shenGong,
+    shenGongNaYin: NAYIN_TABLE[shenGong] || '',
+    taiXi,
+    taiXiNaYin: NAYIN_TABLE[taiXi] || '',
+    prevJie: { name: prevJieObj.getName(), date: prevJieObj.getSolar().toYmdHms() },
+    nextJie: { name: nextJieObj.getName(), date: nextJieObj.getSolar().toYmdHms() },
     startDaYunAge: daYun.length > 0 ? daYun[0].startAge : 0,
     gender,
     lunarDate: lunar.toString(),
@@ -253,40 +303,25 @@ export function calculateBazi(
   }
 }
 
-/** 大运计算 */
-function calculateDaYun(eightChar: any, gender: '男' | '女', birthYear: number): DaYun[] {
+/** 大运计算（精确起运：lunar-javascript Yun API） */
+function calculateDaYun(eightChar: any, gender: '男' | '女', _birthYear: number): DaYun[] {
   const dayGan = eightChar.getDay()[0]
-  const yearGan = eightChar.getYear()[0]
-  const isYangYear = GAN_YINYANG[yearGan] === '阳'
-  
-  // 男命阳年顺行，阴年逆行；女命反之
-  const isForward = (gender === '男') === isYangYear
-
-  // 月柱干支索引
-  const monthGZ = eightChar.getMonth()
-  const monthGanIdx = TIAN_GAN.indexOf(monthGZ[0])
-  const monthZhiIdx = DI_ZHI.indexOf(monthGZ[1])
-
-  // 起运年龄（简化：按3天=1年的近似计算，实际应精确到节气）
-  // 这里用 lunar-javascript 的大运方法获取
-  const startAge = 1 // 默认1岁起运，后续精确化
+  const yun = eightChar.getYun(gender === '男' ? 1 : 0)
+  const daYunArr = yun.getDaYun()
 
   const result: DaYun[] = []
-  for (let i = 0; i < 10; i++) {
-    const step = isForward ? i + 1 : -(i + 1)
-    const ganIdx = ((monthGanIdx + step) % 10 + 10) % 10
-    const zhiIdx = ((monthZhiIdx + step) % 12 + 12) % 12
-    const gz = TIAN_GAN[ganIdx] + DI_ZHI[zhiIdx]
-    
+  // 跳过第0步（小运期），取正式大运10步
+  for (let i = 1; i < Math.min(daYunArr.length, 11); i++) {
+    const d = daYunArr[i]
+    const gz = d.getGanZhi() as string
     result.push({
       ganZhi: gz,
-      startAge: startAge + i * 10,
-      startYear: birthYear + startAge + i * 10,
-      endAge: startAge + (i + 1) * 10 - 1,
-      shiShen: getShiShen(dayGan, TIAN_GAN[ganIdx])
+      startAge: d.getStartAge(),
+      startYear: d.getStartYear(),
+      endAge: d.getEndAge(),
+      shiShen: getShiShen(dayGan, gz[0])
     })
   }
-
   return result
 }
 
