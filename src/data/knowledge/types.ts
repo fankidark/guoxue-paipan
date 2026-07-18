@@ -46,7 +46,7 @@ export interface Subject {
 
 export const SUBJECTS: Subject[] = [
   { id: 'qimen', title: '奇门遁甲', icon: '⚝', ready: true },
-  { id: 'bazi', title: '八字命理', icon: '🀄', ready: false },
+  { id: 'bazi', title: '八字命理', icon: '🀄', ready: true },
   { id: 'meihua', title: '梅花易数', icon: '🌸', ready: false },
 ]
 
